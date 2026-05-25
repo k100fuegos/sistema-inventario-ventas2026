@@ -1,0 +1,78 @@
+/* =========================================
+   ESTILOS DEL LOGIN (login.css)
+   ========================================= */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    background: linear-gradient(135deg, #808080 0%, #ffffff 100%);
+    /* Flexbox para centrar la tarjeta vertical y horizontalmente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* La tarjeta flotante central */
+.login-card {
+    background-color: #ffffff;
+    border-radius: 20px;
+    overflow: hidden; /* Evita que las esquinas se salgan del borde redondeado */
+    width: 100%;
+    max-width: 900px; /* Tamaño máximo para que no ocupe toda la pantalla */
+    min-height: 500px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4); /* Sombra elegante */
+}
+
+/* Panel Izquierdo (Logo) */
+.login-left {
+    background: linear-gradient(135deg, #001f3f 0%, #0074D9 100%);
+    padding: 90px;
+    color: white;
+}
+
+/* Ajustes de la imagen del logo */
+.login-logo {
+    max-width: 180px; /* Ajusta este valor según el tamaño de tu logo */
+    height: auto;
+    margin-bottom: 20px;
+    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3)); /* Sombra al logo */
+}
+
+/* Panel Derecho (Formulario) */
+.login-right {
+    padding: 50px 40px;
+}
+
+/* Colores personalizados */
+.text-cyan {
+    color: #12b5e5 !important;
+}
+
+.bg-cyan {
+    background-color: #12b5e5 !important;
+}
+
+.bg-cyan:hover {
+    background-color: #0fa3ce !important;
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Inputs redondeados tipo píldora */
+.form-control.rounded-pill {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #ced4da;
+    background-color: #f8f9fa;
+}
+
+.form-control.rounded-pill:focus {
+    box-shadow: 0 0 0 0.25rem rgba(18, 181, 229, 0.25);
+    border-color: #12b5e5;
+    background-color: #ffffff;
+}
+
+.icon-label {
+    font-size: 1.3rem;
+    margin-right: 10px;
+}
