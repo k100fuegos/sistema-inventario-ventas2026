@@ -2,7 +2,7 @@
 
 $archivoEnv = __DIR__ . '/../.env';
 if (!file_exists($archivoEnv)) {
-    die ("No se encontro el archivo .env");
+    die ("No se encontró el archivo .env");
 }
 
 $lineas = file($archivoEnv, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
