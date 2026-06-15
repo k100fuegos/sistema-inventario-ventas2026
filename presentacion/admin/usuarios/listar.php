@@ -1,5 +1,24 @@
+<?php
+
+require_once __DIR__  . '/../../../negocio/UsuarioNegocio.php';
+
+$usuarioNegocio = new usuarioNegocio();
+$usuarios = $usuarioNegocio->listarUsuarios();
+
+$mensaje = $_GET['mensaje'] ?? null;
+
+function mostrarValor($valor)
+{
+    return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Usuarios - Tecnobyte</title>
@@ -7,6 +26,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="../../../public/css/style.css?v=<?php echo time(); ?>">
 </head>
+
 <body>
     <div class="d-flex">
         <nav id="sidebar">
@@ -54,25 +74,35 @@
                     <div class="table-responsive">
                         <table class="table table-hover table-striped mb-0 align-middle">
                             <thead class="table-dark">
-                                <tr>
+                                <tr class="text-center">
                                     <th>Nombre</th>
                                     <th>Rol</th>
                                     <th>Correo</th>
-                                    <th class="text-center">Estado</th>
-                                    <th class="text-center">Acciones</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="fw-bold">Edwin Cruz</td>
-                                    <td>Administrador</td>
-                                    <td>admin@sistema.com</td>
-                                    <td class="text-center"><span class="badge bg-success">Activo</span></td>
-                                    <td class="text-center">
-                                        <a href="editar.php?id=1" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
-                                        <a href="eliminar.php?id=1" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
-                                    </td>
-                                </tr>
+                                <?php
+                                if (!empty($usuarios)):
+                                    foreach ($usuarios as $usuario): ?>
+                                        <tr class="text-center">
+                                            <td><?php echo mostrarValor($usuario['nombre_usuario']); ?></td>
+                                            <td><?php echo mostrarValor($usuario['nombre_rol']); ?></td>
+                                            <td><?php echo mostrarValor($usuario['correo_usuario']); ?></td>
+
+                                            <td>
+                                                <a href="editar.php?id=<?php echo mostrarValor($usuario['id_usuario']); ?>" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
+                                                <a href="eliminar.php?id=<?php echo mostrarValor($usuario['id_usuario']); ?>" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach;
+                                else: ?>
+                                    <tr>
+                                        <td colspan="7" class="text-center">
+                                            No hay clientes registrados
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -83,4 +113,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/js/main.js"></script>
 </body>
+
 </html>

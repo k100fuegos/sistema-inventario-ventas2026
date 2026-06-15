@@ -1,10 +1,9 @@
 <?php
 
-require_once __DIR__  . '/../../../negocio/ClienteNegocio.php';
+require_once __DIR__ . '/../../../negocio/RolNegocio.php';
 
-$clienteNegocio = new ClienteNegocio();
-$clientes = $clienteNegocio->listarClientes();
-
+$rolNegocio = new RolNegocio();
+$roles = $rolNegocio->listarRoles();
 $mensaje = $_GET['mensaje'] ?? null;
 
 function mostrarValor($valor)
@@ -19,7 +18,7 @@ function mostrarValor($valor)
 
 <head>
     <meta charset="UTF-8">
-    <title>Clientes - Tecnobyte</title>
+    <title>Categorías - Tecnobyte</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="../../../public/css/style.css?v=<?php echo time(); ?>">
@@ -36,9 +35,9 @@ function mostrarValor($valor)
                 <li><a href="../../dashboard.php"><i class="fa-solid fa-house"></i> Panel Principal</a></li>
                 <li><a href="../ventas/crear.php"><i class="fa-solid fa-cart-shopping"></i> Nueva Venta</a></li>
                 <li><a href="../ventas/listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li>
-                <li><a href="../categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li>
+                <li class="active"><a href="listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li>
                 <li><a href="../productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
-                <li class="active"><a href="listar.php"><i class="fa-solid fa-users"></i> Clientes</a></li>
+                <li><a href="../clientes/listar.php"><i class="fa-solid fa-users"></i> Clientes</a></li>
                 <li><a href="../usuarios/listar.php"><i class="fa-solid fa-user-shield"></i> Usuarios</a></li>
             </ul>
         </nav>
@@ -55,68 +54,51 @@ function mostrarValor($valor)
             </nav>
 
             <div class="container-fluid p-4">
-                <h2 class="mb-4 text-dark fw-bold"><i class="fa-solid fa-users text-secondary"></i> Gestión de Clientes</h2>
+                <h2 class="mb-4 text-dark fw-bold"><i class="fa-solid fa-tags text-secondary"></i> Gestión de Roles</h2>
                 <div class="row mb-4 align-items-center">
                     <div class="col-md-6">
                         <form action="" method="GET" class="d-flex">
-                            <input type="text" class="form-control me-2" name="buscar_cliente" placeholder="Buscar por nombre o correo...">
+                            <input type="text" class="form-control me-2" name="buscar_categoria" placeholder="Buscar categoría...">
                             <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
                         </form>
                     </div>
 
                     <?php if ($mensaje === 'creado'): ?>
-                        <div class="alert alert-success">Cliente registrado correctamente</div>
+                        <div class="alert alert-success">Rol registrada correctamente</div>
                     <?php elseif ($mensaje === 'actualizado'): ?>
-                        <div class="alert alert-success">Cliente actualizado correctamente</div>
+                        <div class="alert alert-success">Rol actualizada correctamente</div>
                     <?php elseif ($mensaje === 'eliminado'): ?>
-                        <div class="alert alert-success">Cliente eliminado correctamente</div>
+                        <div class="alert alert-success">Rol eliminada correctamente</div>
                     <?php endif; ?>
 
                     <div class="col-md-6 text-md-end">
-                        <a href="crear.php" class="btn btn-primary fw-bold"><i class="fa-solid fa-plus"></i> Nuevo Cliente</a>
+                        <a href="crear.php" class="btn btn-primary fw-bold"><i class="fa-solid fa-plus"></i> Nuevo Rol</a>
                     </div>
                 </div>
 
                 <div class="card shadow-sm border-0">
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped mb-0 align-middle">
+                        <table class="table table-hover table-striped mb-0 align-middle text-center">
                             <thead class="table-dark">
-                                <tr class="text-center">
-                                    <th>Cliente</th>
-                                    <th>Tipo</th>
-                                    <th>DUI</th>
-                                    <th>NIT</th>
-                                    <th>NRC</th>
-                                    <th>Telefono</th>
-                                    <th>Correo</th>
-                                    <th>Dirección</th>
+                                <tr>
+                                    <th>Rol</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                if (!empty($clientes)):
-                                    foreach ($clientes as $cliente): ?>
-                                        <tr class="text-center">
-                                            <td><?php echo mostrarValor($cliente['nombre_cliente']); ?></td>
-                                            <td><?php echo mostrarValor($cliente['tipo_cliente']); ?></td>
-                                            <td><?php echo mostrarValor($cliente['dui_cliente']); ?></td>
-                                            <td><?php echo mostrarValor($cliente['nit_cliente']); ?></td>
-                                            <td><?php echo mostrarValor($cliente['nrc_cliente']); ?></td>
-                                            <td><?php echo mostrarValor($cliente['telefono_cliente']); ?></td>
-                                            <td><?php echo mostrarValor($cliente['correo_cliente']); ?></td>
-                                            <td><?php echo mostrarValor($cliente['direccion_cliente']); ?></td>
+                                <?php if (!empty($roles)): ?>
+                                    <?php foreach ($roles as $rol): ?>
+                                        <tr>
+                                            <td><?php echo mostrarValor($rol['nombre_rol']); ?></td>
                                             <td>
-                                                <a href="editar.php?id=<?php echo mostrarValor($cliente['id_cliente']); ?>" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
-                                                <a href="eliminar.php?id=<?php echo mostrarValor($cliente['id_cliente']); ?>" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
+                                                <a href="editar.php?id=<?php echo mostrarValor($rol['id_rol']); ?>" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
+                                                <a href="eliminar.php?id=<?php echo mostrarValor($rol['id_rol']); ?>" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
                                             </td>
                                         </tr>
-                                    <?php endforeach;
-                                else: ?>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
                                     <tr>
-                                        <td colspan="7" class="text-center">
-                                            No hay clientes registrados
-                                        </td>
+                                        <td colspan="3" class="text-center">No hay marcas registradas</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>

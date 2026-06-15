@@ -45,6 +45,10 @@ CREATE TABLE usuarios (
 CREATE TABLE clientes (
     id_cliente INT AUTO_INCREMENT PRIMARY KEY,
     nombre_cliente VARCHAR(150) NOT NULL,
+    tipo_cliente ENUM('PN', 'PJ') NOT NULL DEFAULT 'PN',
+    dui_cliente VARCHAR(10) UNIQUE,
+    nit_cliente VARCHAR(17) UNIQUE,
+    nrc_cliente VARCHAR(20) UNIQUE,
     telefono_cliente VARCHAR(20),
     correo_cliente VARCHAR(100),
     direccion_cliente TEXT,
@@ -171,18 +175,18 @@ INSERT INTO usuarios (id_usuario, id_rol, nombre_usuario, correo_usuario, passwo
 (2, 2, 'Maria Lopez', 'supervisor@sistema.com', 'super123', 1, '2026-06-13 22:38:52'),
 (3, 3, 'Carlos Perez', 'vendedor@sistema.com', 'vend123', 1, '2026-06-13 22:38:52');
 
-INSERT INTO clientes (id_cliente, nombre_cliente, telefono_cliente, correo_cliente, direccion_cliente, estado_cliente, created_at) VALUES
-(1, 'Consumidor Final', '0000-0000', 'consumidor@email.com', 'Ventas de mostrador', 1, '2026-06-13 22:38:52'),
-(2, 'Carlos Mendoza', '7012-3456', 'carlos@email.com', 'Colonia El Sitio, San Miguel', 1, '2026-06-13 22:38:52'),
-(3, 'Ana Gomez', '7543-2109', 'ana@email.com', 'Jardines de Bolonia, San Miguel', 1, '2026-06-13 22:38:52'),
-(4, 'Jose Ramirez', '7123-4567', 'jose@email.com', 'Barrio Concepcion, San Miguel', 1, '2026-06-13 22:38:52');
+INSERT INTO clientes (id_cliente, nombre_cliente, tipo_cliente, dui_cliente, nit_cliente, nrc_cliente, telefono_cliente, correo_cliente, direccion_cliente, estado_cliente, created_at) VALUES
+(1, 'Consumidor Final', 'PN', '00000000-0', NULL, NULL, '0000-0000', 'consumidor@email.com', 'Ventas de mostrador', 1, '2026-06-13 22:38:52'),
+(2, 'Carlos Mendoza', 'PN', '01234567-8', '0614-120390-101-5', NULL, '7012-3456', 'carlos@email.com', 'Colonia El Sitio, San Miguel', 1, '2026-06-13 22:38:52'),
+(3, 'Ana Gomez', 'PN', '02345678-9', '0614-250495-102-3', NULL, '7543-2109', 'ana@email.com', 'Jardines de Bolonia, San Miguel', 1, '2026-06-13 22:38:52'),
+(4, 'Jose Ramirez', 'PN', '03456789-1', '0614-180188-103-8', NULL, '7123-4567', 'jose@email.com', 'Barrio Concepcion, San Miguel', 1, '2026-06-13 22:38:52');
 
 INSERT INTO categorias (id_categoria, nombre_categoria, descripcion_categoria, estado_categoria, created_at) VALUES
 (1, 'Componentes de PC', 'Componentes internos para computadoras', 1, '2026-06-13 22:38:52'),
 (2, 'Accesorios de Red', 'Equipos y accesorios para redes', 1, '2026-06-13 22:38:52'),
 (3, 'Consolas y Videojuegos', 'Consolas, controles y videojuegos', 1, '2026-06-13 22:38:52'),
 (4, 'Almacenamiento', 'Dispositivos de almacenamiento de datos', 1, '2026-06-13 22:38:52'),
-(5, 'Herramientas de Servicio Técnico', 'Herramientas para mantenimiento y reparación', 1, '2026-06-13 22:38:52'),
+(5, 'Herramientas de Servicio Tecnico', 'Herramientas para mantenimiento y reparación', 1, '2026-06-13 22:38:52'),
 (6, 'Perifericos', 'Periféricos para computadoras', 1, '2026-06-13 22:38:52');
 
 INSERT INTO marcas (id_marca, nombre_marca, estado_marca) VALUES
@@ -214,3 +218,4 @@ INSERT INTO detalle_ventas (id_detalle, id_venta, id_producto, cantidad_producto
 (3, 2, 1, 1, 16.00, 16.00),
 (4, 3, 6, 1, 42.50, 42.50);
 
+COMMIT;
