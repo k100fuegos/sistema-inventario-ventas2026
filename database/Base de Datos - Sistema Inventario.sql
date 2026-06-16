@@ -15,7 +15,8 @@ USE bd_inventario_ventas;
 
 CREATE TABLE roles (
     id_rol INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_rol VARCHAR(50) NOT NULL UNIQUE
+    nombre_rol VARCHAR(50) NOT NULL UNIQUE,
+    estado_rol TINYINT(1) DEFAULT 1
 ) ENGINE=InnoDB;
 
 -- ============================================
@@ -29,6 +30,7 @@ CREATE TABLE usuarios (
     correo_usuario VARCHAR(100) NOT NULL UNIQUE,
     password_usuario VARCHAR(255) NOT NULL,
     estado_usuario TINYINT(1) DEFAULT 1,
+    eliminado_usuario TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_usuario_rol
@@ -162,18 +164,20 @@ CREATE TABLE detalle_ventas (
 ) ENGINE=InnoDB;
 
 -- ============================================
--- DATOS INICIALES
+-- VOLCADO DE DATOS INICIALES
 -- ============================================
 
-INSERT INTO roles (id_rol, nombre_rol) VALUES
-(1, 'Administrador'),
-(2, 'Supervisor'),
-(3, 'Vendedor');
+START TRANSACTION;
 
-INSERT INTO usuarios (id_usuario, id_rol, nombre_usuario, correo_usuario, password_usuario, estado_usuario, created_at) VALUES
-(1, 1, 'Edwin Cruz', 'admin@sistema.com', 'admin123', 1, '2026-06-13 22:38:52'),
-(2, 2, 'Maria Lopez', 'supervisor@sistema.com', 'super123', 1, '2026-06-13 22:38:52'),
-(3, 3, 'Carlos Perez', 'vendedor@sistema.com', 'vend123', 1, '2026-06-13 22:38:52');
+INSERT INTO roles (id_rol, nombre_rol, estado_rol) VALUES
+(1, 'Administrador', 1),
+(2, 'Supervisor', 1),
+(3, 'Vendedor', 1);
+
+INSERT INTO usuarios (id_usuario, id_rol, nombre_usuario, correo_usuario, password_usuario, estado_usuario, eliminado_usuario, created_at) VALUES
+(1, 1, 'Edwin Cruz', 'admin@sistema.com', 'admin123', 1, 0, '2026-06-13 22:38:52'),
+(2, 2, 'Maria Lopez', 'supervisor@sistema.com', 'super123', 1, 0, '2026-06-13 22:38:52'),
+(3, 3, 'Carlos Perez', 'vendedor@sistema.com', 'vend123', 1, 0, '2026-06-13 22:38:52');
 
 INSERT INTO clientes (id_cliente, nombre_cliente, tipo_cliente, dui_cliente, nit_cliente, nrc_cliente, telefono_cliente, correo_cliente, direccion_cliente, estado_cliente, created_at) VALUES
 (1, 'Consumidor Final', 'PN', '00000000-0', NULL, NULL, '0000-0000', 'consumidor@email.com', 'Ventas de mostrador', 1, '2026-06-13 22:38:52'),

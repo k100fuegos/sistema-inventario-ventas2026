@@ -78,6 +78,7 @@ function mostrarValor($valor)
                                     <th>Nombre</th>
                                     <th>Rol</th>
                                     <th>Correo</th>
+                                    <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -89,6 +90,13 @@ function mostrarValor($valor)
                                             <td><?php echo mostrarValor($usuario['nombre_usuario']); ?></td>
                                             <td><?php echo mostrarValor($usuario['nombre_rol']); ?></td>
                                             <td><?php echo mostrarValor($usuario['correo_usuario']); ?></td>
+                                            <td>
+                                                <?php if ($usuario['estado_usuario'] == 1): ?>
+                                                    <span class="badge bg-success">Activo</span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-danger">Inactivo</span>
+                                                <?php endif; ?>
+                                            </td>
 
                                             <td>
                                                 <a href="editar.php?id=<?php echo mostrarValor($usuario['id_usuario']); ?>" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>

@@ -10,10 +10,10 @@ class UsuarioDatos
         $conexion = new Conexion();
         // Se incluye un INNER JOIN para traer el nombre del rol directamente
         $conexion->query = "SELECT u.id_usuario, u.id_rol, r.nombre_rol, u.nombre_usuario, 
-                                   u.correo_usuario, u.estado_usuario
+                                   u.correo_usuario, u.estado_usuario, u.eliminado_usuario
                             FROM usuarios u
                             INNER JOIN roles r ON u.id_rol = r.id_rol
-                            WHERE u.estado_usuario = 1 
+                            WHERE u.eliminado_usuario = 0 
                             ORDER BY u.nombre_usuario ASC";
                             
         return $conexion->get_records();
@@ -28,8 +28,8 @@ class UsuarioDatos
     {
         $conexion = new Conexion();
 
-        $conexion->query = "INSERT INTO usuarios (id_rol, nombre_usuario, correo_usuario, password_usuario, estado_usuario)
-                            VALUES (:idRol, :nombreUsuario, :correoUsuario, :passwordUsuario, 1)";
+        $conexion->query = "INSERT INTO usuarios (id_rol, nombre_usuario, correo_usuario, password_usuario, estado_usuario, eliminado_usuario)
+                            VALUES (:idRol, :nombreUsuario, :correoUsuario, :passwordUsuario, 1, 0)";
 
         return $conexion->execute_query([
             ':idRol'           => $usuario['id_rol'],
@@ -48,6 +48,7 @@ class UsuarioDatos
                                 nombre_usuario = :nombreUsuario, 
                                 correo_usuario = :correoUsuario, 
                                 password_usuario = :passwordUsuario
+                                estado_usuario = :estadoUsuario
                             WHERE id_usuario = :idUsuario";
 
         return $conexion->execute_query([
@@ -55,6 +56,7 @@ class UsuarioDatos
             ':nombreUsuario'   => $this->valorNulo($usuario['nombre_usuario']),
             ':correoUsuario'   => $this->valorNulo($usuario['correo_usuario']),
             ':passwordUsuario' => $this->valorNulo($usuario['password_usuario']),
+            ':estadoUsuario'   => $usuario['estado_usuario'],
             ':idUsuario'       => $usuario['id_usuario']
         ]);
     }
@@ -67,7 +69,7 @@ class UsuarioDatos
                             FROM usuarios u
                             INNER JOIN roles r ON u.id_rol = r.id_rol
                             WHERE u.id_usuario = :idUsuario
-                            AND u.estado_usuario = 1";
+                            AND u.eliminado_usuario = 0";
                             
         return $conexion->get_record([
             ':idUsuario' => $idUsuario
@@ -78,7 +80,7 @@ class UsuarioDatos
     {
         $conexion = new Conexion();
         $conexion->query = "UPDATE usuarios 
-                            SET estado_usuario = 0 
+                            SET eliminado_usuario = 0 
                             WHERE id_usuario = :idUsuario";
 
         return $conexion->execute_query([

@@ -25,7 +25,8 @@ class UsuarioNegocio
             'nombre_usuario'   => isset($datos['nombre_usuario']) ? trim($datos['nombre_usuario']) : '',
             'correo_usuario'   => isset($datos['correo_usuario']) ? trim($datos['correo_usuario']) : '',
             'password_usuario' => isset($datos['password_usuario']) ? trim($datos['password_usuario']) : '',
-            'estado_usuario'   => isset($datos['estado_usuario']) ? (int) $datos['estado_usuario'] : 1
+            'estado_usuario'   => isset($datos['estado_usuario']) ? (int) $datos['estado_usuario'] : 1,
+            'eliminado_usuario' => isset($datos['eliminado_usuario']) ? (int)$datos['eliminado_usuario'] : 0,
         ];
     }
 
@@ -66,12 +67,18 @@ class UsuarioNegocio
             if (isset($datos['password_usuario']) && !empty(trim($datos['password_usuario'])) && strlen(trim($datos['password_usuario'])) > 255) {
                 $errores[] = "La contraseña no debe superar los 255 caracteres";
             }
+
+            // cantidad minima de caracteres
+            if (isset($datos['password_usuario']) && !empty(trim($datos['password_usuario'])) && strlen(trim($datos['password_usuario'])) < 8) {
+                $errores[] = "La contraseña debe tener al menos 8 caracteres";
+            }
         }
 
         // Validación del Estado
         if (isset($datos['estado_usuario']) && !in_array((int)$datos['estado_usuario'], [0, 1], true)) {
             $errores[] = "El estado del usuario no es válido";
         }
+
 
         return $errores;
     }
@@ -88,7 +95,7 @@ class UsuarioNegocio
         }
 
         $usuario = $this->limpiarDatos($datos);
-        
+
         // RECOMENDACIÓN: Encriptar la contraseña antes de mandarla a la capa de datos
         $usuario['password_usuario'] = password_hash($usuario['password_usuario'], PASSWORD_BCRYPT);
 
@@ -133,7 +140,7 @@ class UsuarioNegocio
             $usuarioExistente = $this->usuarioDatos->obtenerUsuarioPorId($usuario['id_usuario']);
             // Nota: Para este caso específico, tu método 'obtenerUsuarioPorId' debe retornar el password,
             // de lo contrario, deberás ajustar tu query de datos o manejarlo desde el controlador.
-            $usuario['password_usuario'] = $usuarioExistente['password_usuario'] ?? ''; 
+            $usuario['password_usuario'] = $usuarioExistente['password_usuario'] ?? '';
         } else {
             // Si envió una nueva, la encriptamos
             $usuario['password_usuario'] = password_hash($usuario['password_usuario'], PASSWORD_BCRYPT);
