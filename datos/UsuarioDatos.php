@@ -29,13 +29,14 @@ class UsuarioDatos
         $conexion = new Conexion();
 
         $conexion->query = "INSERT INTO usuarios (id_rol, nombre_usuario, correo_usuario, password_usuario, estado_usuario, eliminado_usuario)
-                            VALUES (:idRol, :nombreUsuario, :correoUsuario, :passwordUsuario, 1, 0)";
+                            VALUES (:idRol, :nombreUsuario, :correoUsuario, :passwordUsuario, :estadoUsuario, 0)";
 
         return $conexion->execute_query([
             ':idRol'           => $usuario['id_rol'],
             ':nombreUsuario'   => $this->valorNulo($usuario['nombre_usuario']),
             ':correoUsuario'   => $this->valorNulo($usuario['correo_usuario']),
             ':passwordUsuario' => $this->valorNulo($usuario['password_usuario']),
+            ':estadoUsuario'   => $usuario['estado_usuario']
         ]);
     }
 
@@ -47,7 +48,7 @@ class UsuarioDatos
                             SET id_rol = :idRol, 
                                 nombre_usuario = :nombreUsuario, 
                                 correo_usuario = :correoUsuario, 
-                                password_usuario = :passwordUsuario
+                                password_usuario = :passwordUsuario,
                                 estado_usuario = :estadoUsuario
                             WHERE id_usuario = :idUsuario";
 
@@ -64,7 +65,7 @@ class UsuarioDatos
     public function obtenerUsuarioPorId($idUsuario)
     {
         $conexion = new Conexion();
-        $conexion->query = "SELECT u.id_usuario, u.id_rol, r.nombre_rol, u.nombre_usuario, 
+        $conexion->query = "SELECT u.id_usuario, u.id_rol, r.nombre_rol, r.nombre_rol, u.nombre_usuario, 
                                    u.correo_usuario, u.password_usuario, u.estado_usuario, u.created_at
                             FROM usuarios u
                             INNER JOIN roles r ON u.id_rol = r.id_rol
@@ -80,7 +81,7 @@ class UsuarioDatos
     {
         $conexion = new Conexion();
         $conexion->query = "UPDATE usuarios 
-                            SET eliminado_usuario = 0 
+                            SET eliminado_usuario = 1 
                             WHERE id_usuario = :idUsuario";
 
         return $conexion->execute_query([

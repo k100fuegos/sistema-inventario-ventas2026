@@ -65,6 +65,14 @@ function mostrarValor($valor)
                             <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
                         </form>
                     </div>
+
+                    <?php if ($mensaje === 'creado'): ?>
+                        <div class="alert alert-success">Producto registrado correctamente</div>
+                    <?php elseif ($mensaje === 'actualizado'): ?>
+                        <div class="alert alert-success">Producto actualizado correctamente</div>
+                    <?php elseif ($mensaje === 'eliminado'): ?>
+                        <div class="alert alert-success">Producto eliminado correctamente</div>
+                    <?php endif; ?>
                     <div class="col-md-6 text-md-end">
                         <a href="crear.php" class="btn btn-primary fw-bold"><i class="fa-solid fa-plus"></i> Nuevo Usuario</a>
                     </div>

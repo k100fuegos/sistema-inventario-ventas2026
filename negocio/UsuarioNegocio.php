@@ -21,10 +21,11 @@ class UsuarioNegocio
     {
         return [
             'id_usuario'       => isset($datos['id_usuario']) ? (int) $datos['id_usuario'] : null,
-            'id_rol'           => isset($datos['id_rol']) ? (int) $datos['id_rol'] : null,
+            'id_rol'           => (int) $datos['id_rol'],
             'nombre_usuario'   => isset($datos['nombre_usuario']) ? trim($datos['nombre_usuario']) : '',
             'correo_usuario'   => isset($datos['correo_usuario']) ? trim($datos['correo_usuario']) : '',
             'password_usuario' => isset($datos['password_usuario']) ? trim($datos['password_usuario']) : '',
+            'confirmation_password_usuario' => isset($datos['confirmation_password_usuario']) ? trim($datos['confirmation_password_usuario']) : '',
             'estado_usuario'   => isset($datos['estado_usuario']) ? (int) $datos['estado_usuario'] : 1,
             'eliminado_usuario' => isset($datos['eliminado_usuario']) ? (int)$datos['eliminado_usuario'] : 0,
         ];
@@ -57,23 +58,101 @@ class UsuarioNegocio
 
         // Validación de la Contraseña
         if (!$esActualizacion) {
-            // Si es un registro nuevo, el password es obligatorio
+
+            // Obligatoria al crear
             if (!isset($datos['password_usuario']) || empty(trim($datos['password_usuario']))) {
                 $errores[] = "La contraseña es obligatoria para nuevos usuarios";
             }
-        } else {
-            // Si se está actualizando, podrías permitir que venga vacío si no se desea cambiar
-            // Esta regla se puede ajustar según el flujo que decidas en tu frontend
-            if (isset($datos['password_usuario']) && !empty(trim($datos['password_usuario'])) && strlen(trim($datos['password_usuario'])) > 255) {
+
+            if (isset($datos['password_usuario']) && strlen(trim($datos['password_usuario'])) > 255) {
                 $errores[] = "La contraseña no debe superar los 255 caracteres";
             }
 
-            // cantidad minima de caracteres
-            if (isset($datos['password_usuario']) && !empty(trim($datos['password_usuario'])) && strlen(trim($datos['password_usuario'])) < 8) {
+            if (isset($datos['password_usuario']) && strlen(trim($datos['password_usuario'])) < 8) {
                 $errores[] = "La contraseña debe tener al menos 8 caracteres";
             }
-        }
 
+            // Debe contener una letra
+            if (isset($datos['password_usuario']) && !preg_match('/[A-Za-z]/', $datos['password_usuario'])) {
+                $errores[] = "La contraseña debe contener al menos una letra";
+            }
+
+            // Debe contener un número
+            if (isset($datos['password_usuario']) && !preg_match('/[0-9]/', $datos['password_usuario'])) {
+                $errores[] = "La contraseña debe contener al menos un número";
+            }
+
+            // Debe contener un carácter especial
+            if (isset($datos['password_usuario']) && !preg_match('/[\W_]/', $datos['password_usuario'])) {
+                $errores[] = "La contraseña debe contener al menos un carácter especial";
+            }
+
+            // Confirmación obligatoria
+            if (!isset($datos['confirmation_password_usuario']) || empty(trim($datos['confirmation_password_usuario']))) {
+                $errores[] = "La confirmación de la contraseña es obligatoria";
+            }
+
+            // Deben coincidir
+            if (
+                isset($datos['password_usuario']) &&
+                isset($datos['confirmation_password_usuario']) &&
+                $datos['password_usuario'] !== $datos['confirmation_password_usuario']
+            ) {
+                $errores[] = "Las contraseñas no coinciden";
+            }
+        } else {
+
+            // En edición solo validar si alguno de los dos campos fue llenado
+            $password = trim($datos['password_usuario'] ?? '');
+            $confirmacion = trim($datos['confirmation_password_usuario'] ?? '');
+
+            if ($password !== '' || $confirmacion !== '') {
+
+                // Ambos deben estar llenos
+                if ($password === '') {
+                    $errores[] = "Debe ingresar la nueva contraseña";
+                }
+
+                if ($confirmacion === '') {
+                    $errores[] = "Debe confirmar la nueva contraseña";
+                }
+
+                // Longitud máxima
+                if ($password !== '' && strlen($password) > 255) {
+                    $errores[] = "La contraseña no debe superar los 255 caracteres";
+                }
+
+                // Longitud mínima
+                if ($password !== '' && strlen($password) < 8) {
+                    $errores[] = "La contraseña debe tener al menos 8 caracteres";
+                }
+
+                // Debe contener una letra
+                if ($password !== '' && !preg_match('/[A-Za-z]/', $password)) {
+                    $errores[] = "La contraseña debe contener al menos una letra";
+                }
+
+                // Debe contener un número
+                if ($password !== '' && !preg_match('/[0-9]/', $password)) {
+                    $errores[] = "La contraseña debe contener al menos un número";
+                }
+
+                // Debe contener un carácter especial
+                if ($password !== '' && !preg_match('/[\W_]/', $password)) {
+                    $errores[] = "La contraseña debe contener al menos un carácter especial";
+                }
+
+                // Deben coincidir
+                if ($password !== '' && $confirmacion !== '' && $password !== $confirmacion) {
+                    $errores[] = "Las contraseñas no coinciden";
+                }
+
+                // No permitir espacios dentro de la contraseña
+                if ($password !== '' && preg_match('/\s/', $password)) {
+                    $errores[] = "La contraseña no puede contener espacios";
+                }
+            }
+        }
         // Validación del Estado
         if (isset($datos['estado_usuario']) && !in_array((int)$datos['estado_usuario'], [0, 1], true)) {
             $errores[] = "El estado del usuario no es válido";

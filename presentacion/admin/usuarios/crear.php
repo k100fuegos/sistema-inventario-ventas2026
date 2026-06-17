@@ -1,3 +1,52 @@
+<?php
+
+require_once __DIR__ . '/../../../negocio/UsuarioNegocio.php';
+require_once __DIR__ . '/../../../negocio/RolNegocio.php';
+
+$usuarioNegocio = new UsuarioNegocio();
+$rolNegocio = new RolNegocio();
+
+$usuarios = $usuarioNegocio->listarUsuarios();
+$roles = $rolNegocio->listarRoles();
+
+$errores = [];
+$datos = [
+    'nombre_usuario' => '',
+    'id_rol' => '',
+    'correo_usuario' => '',
+    'password_usuario' => '',
+    'confirmation_password_usuario' => '',
+    'estado_usuario' => 1,
+    ];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $datos = [
+        'nombre_usuario' => $_POST['nombre_usuario'] ?? '',
+        'id_rol' => $_POST['id_rol'] ?? '',
+        'correo_usuario' => $_POST['correo_usuario'] ?? '',
+        'password_usuario' => $_POST['password_usuario'] ?? '',
+        'confirmation_password_usuario' => $_POST['confirmation_password_usuario'] ?? '',
+        'estado_usuario' => $_POST['estado_usuario'] ?? 1
+    ];
+
+
+    $resultado = $usuarioNegocio->crearUsuario($datos);
+
+    if ($resultado['exito']) {
+        header('Location: listar.php?mensaje=creado');
+        exit;
+    }
+
+    $errores = $resultado['errores'];
+}
+
+function mostrarValor($valor)
+{
+    return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -33,37 +82,58 @@
                         <h4 class="fw-bold mb-0 text-primary">Registrar Nuevo Usuario</h4>
                     </div>
                     <div class="card-body p-4">
+
+                    <?php if (!empty($errores)): ?>
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    <?php foreach ($errores as $error): ?>
+                                        <li><?php echo mostrarValor($error); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
                         
                         <form action="" method="POST">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">nombre</label>
-                                    <input type="text" class="form-control" name="nombre" required>
+                                    <label class="form-label fw-bold">Nombre del usuario:</label>
+                                    <input type="text" class="form-control" name="nombre_usuario" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">id_rol (Relación)</label>
+                                    <label class="form-label fw-bold">Rol: </label>
                                     <select class="form-select" name="id_rol" required>
                                         <option value="">Seleccione un rol...</option>
-                                       
+                                        <?php foreach ($roles as $rol): ?>
+                                            <option value="<?php echo mostrarValor($rol['id_rol']); ?>">
+                                                <?php echo mostrarValor($rol['nombre_rol']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">correo</label>
-                                    <input type="email" class="form-control" name="correo" required>
+                                    <label class="form-label fw-bold">Correo:</label>
+                                    <input type="email" class="form-control" name="correo_usuario" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">password</label>
-                                    <input type="password" class="form-control" name="password" required>
+                                    <label class="form-label fw-bold">Estado del usuario:</label>
+                                <select class="form-select" name="estado_usuario">
+                                    <option value="1">Activo</option>
+                                    <option value="0">Inactivo</option>
+                                </select>
                                 </div>
                             </div>
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">estado</label>
-                                <select class="form-select" name="estado">
-                                    <option value="1">1 (Activo)</option>
-                                    <option value="0">0 (Inactivo)</option>
-                                </select>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Contraseña:</label>
+                                    <input type="password" class="form-control" name="password_usuario" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Confirmar contraseña:</label>
+                                    <input type="password" class="form-control" name="confirmation_password_usuario" required>
+                                </div>
                             </div>
                             <hr>
                             <div class="text-end">
