@@ -9,7 +9,8 @@ $productos = $productoNegocio->listarProductos();
 
 $mensaje = $_GET['mensaje'] ?? '';
 
-function mostrarValor($valor) {
+function mostrarValor($valor)
+{
     return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
 }
 
@@ -17,6 +18,7 @@ function mostrarValor($valor) {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Productos - Tecnobyte</title>
@@ -24,6 +26,7 @@ function mostrarValor($valor) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="../../../public/css/style.css?v=<?php echo time(); ?>">
 </head>
+
 <body>
     <div class="d-flex">
         <nav id="sidebar">
@@ -63,6 +66,15 @@ function mostrarValor($valor) {
                             <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
                         </form>
                     </div>
+
+                    <?php if ($mensaje === 'creado'): ?>
+                        <div class="alert alert-success">Producto registrado correctamente</div>
+                    <?php elseif ($mensaje === 'actualizado'): ?>
+                        <div class="alert alert-success">Producto actualizado correctamente</div>
+                    <?php elseif ($mensaje === 'eliminado'): ?>
+                        <div class="alert alert-success">Producto eliminado correctamente</div>
+                    <?php endif; ?>
+
                     <div class="col-md-6 text-md-end">
                         <a href="crear.php" class="btn btn-primary fw-bold"><i class="fa-solid fa-plus"></i> Nuevo Producto</a>
                     </div>
@@ -83,49 +95,49 @@ function mostrarValor($valor) {
                                     <th>Stock</th>
                                     <th>Precio</th>
                                     <th>Acciones</th>
-                                </tr>
+                                    </tr>
                             </thead>
                             <tbody>
                                 <?php if (!empty($productos)):
-                            foreach ($productos as $producto): ?>
-                                <tr>
-                                    <td class="py-5"><?php echo mostrarValor($producto['codigo_producto']); ?></td>
-                                    <td>
-                                        <?php
-                                            $imagenProducto = $producto['imagen_producto'] ?: 'sin-imagen.png';
-                                            $rutaImagen = $producto['imagen_producto'] !== 'sin-imagen.png'
-                                                ? "../../../public/img/productos/{$imagenProducto}"
-                                                : "../../../public/img/{$imagenProducto}";
+                                    foreach ($productos as $producto): ?>
+                                        <tr>
+                                            <td class="py-5"><?php echo mostrarValor($producto['codigo_producto']); ?></td>
+                                            <td>
+                                                <?php
+                                                $imagenProducto = $producto['imagen_producto'] ?: 'sin-imagen.png';
+                                                $rutaImagen = $producto['imagen_producto'] !== 'sin-imagen.png'
+                                                    ? "../../../public/img/productos/{$imagenProducto}"
+                                                    : "../../../public/img/{$imagenProducto}";
 
-                                            if (empty($imagenProducto) || !file_exists($rutaImagen)) {
-                                                $rutaImagen = "../../../public/img/sin-imagen.png";
-                                            }
-                                        ?>
-                                        <img src="<?php echo mostrarValor($rutaImagen); ?>"
-                                            alt="Imagen del producto"
-                                            class="img-thumbnail"
-                                            style="width: 70px; height: 70px; object-fit: cover;">
-                                    </td>
+                                                if (empty($imagenProducto) || !file_exists($rutaImagen)) {
+                                                    $rutaImagen = "../../../public/img/sin-imagen.png";
+                                                }
+                                                ?>
+                                                <img src="<?php echo mostrarValor($rutaImagen); ?>"
+                                                    alt="Imagen del producto"
+                                                    class="img-thumbnail"
+                                                    style="width: 70px; height: 70px; object-fit: cover;">
+                                            </td>
 
-                                    <td><?php echo mostrarValor($producto['nombre_producto']); ?></td>
-                                    <td><?php echo mostrarValor($producto['modelo_producto']); ?></td>
-                                    <td><?php echo mostrarValor($producto['descripcion_producto']); ?></td>
-                                    <td><?php echo mostrarValor($producto['nombre_categoria']); ?></td>
-                                    <td><?php echo mostrarValor($producto['nombre_marca']); ?></td>
-                                    <td><?php echo mostrarValor($producto['stock_producto']); ?></td>
-                                    <td>$<?php echo number_format((float) $producto['precio_producto'], 2); ?></td>
-                                    <td>
+                                            <td><?php echo mostrarValor($producto['nombre_producto']); ?></td>
+                                            <td><?php echo mostrarValor($producto['modelo_producto']); ?></td>
+                                            <td><?php echo mostrarValor($producto['descripcion_producto']); ?></td>
+                                            <td><?php echo mostrarValor($producto['nombre_categoria']); ?></td>
+                                            <td><?php echo mostrarValor($producto['nombre_marca']); ?></td>
+                                            <td><?php echo mostrarValor($producto['stock_producto']); ?></td>
+                                            <td>$<?php echo number_format((float) $producto['precio_producto'], 2); ?></td>
+                                            <td>
                                                 <a href="editar.php?id=<?php echo mostrarValor($producto['id_producto']); ?>" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
                                                 <a href="eliminar.php?id=<?php echo mostrarValor($producto['id_producto']); ?>" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
 
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="9" class="text-center">No hay productos registrados</td>
-                            </tr>
-                        <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="9" class="text-center">No hay productos registrados</td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -136,4 +148,5 @@ function mostrarValor($valor) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/js/main.js"></script>
 </body>
+
 </html>

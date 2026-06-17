@@ -22,7 +22,7 @@ class CategoriaDatos
     public function insertarCategoria($categoria)
     {
         $conexion = new Conexion();
-        $conexion->query = 'INSERT INTO categorias (nombre_categoria, descripcion_categoria,estado_categoria)
+        $conexion->query = 'INSERT INTO categorias (nombre_categoria, descripcion_categoria, estado_categoria)
                          VALUES (:nombreCategoria, :descripcionCategoria, 1)';
 
         return $conexion->execute_query([

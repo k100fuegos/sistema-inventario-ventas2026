@@ -1,5 +1,41 @@
+<?php
+
+require_once __DIR__ . '/../../../negocio/CategoriaNegocio.php';
+
+$categoriaNegocio = new CategoriaNegocio();
+$errores = [];
+$datos = [
+    'nombre_categoria' => '',
+    'descripcion_categoria' => ''
+    ];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $datos = [
+        'nombre_categoria' => $_POST['nombre_categoria'] ?? '',
+        'descripcion_categoria' => $_POST['descripcion_categoria'] ?? ''
+    ];
+
+    $resultado = $categoriaNegocio->crearCategoria($datos);
+
+    if ($resultado['exito']) {
+        header('Location: listar.php?mensaje=creado');
+        exit;
+    }
+
+    $errores = $resultado['errores'];
+}
+
+function mostrarValor($valor)
+{
+    return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Nueva Categoría - Tecnobyte</title>
@@ -7,6 +43,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="../../../public/css/style.css?v=<?php echo time(); ?>">
 </head>
+
 <body>
     <div class="d-flex">
         <!-- SIDEBAR -->
@@ -39,18 +76,23 @@
                         <h4 class="fw-bold mb-0 text-primary">Registrar Nueva Categoría</h4>
                     </div>
                     <div class="card-body p-4">
-                        
+                        <?php if (!empty($errores)): ?>
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    <?php foreach ($errores as $error): ?>
+                                        <li><?php echo mostrarValor($error); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
                         <form action="" method="POST">
                             <div class="mb-3">
-                                <label class="form-label fw-bold">nombre_categoria</label>
+                                <label class="form-label fw-bold">Nombre de la categoria:</label>
                                 <input type="text" class="form-control" name="nombre_categoria" required>
                             </div>
                             <div class="mb-4">
-                                <label class="form-label fw-bold">estado</label>
-                                <select class="form-select" name="estado">
-                                    <option value="1">1 (Activo)</option>
-                                    <option value="0">0 (Inactivo)</option>
-                                </select>
+                                <label class="form-label fw-bold">Descripcion:</label>
+                                <textarea class="form-control" name="descripcion_categoria" rows="3"></textarea>
                             </div>
                             <hr>
                             <div class="text-end">
@@ -66,4 +108,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/js/main.js"></script>
 </body>
+
 </html>

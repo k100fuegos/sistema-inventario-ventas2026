@@ -1,3 +1,39 @@
+<?php
+
+require_once __DIR__ . '/../../../negocio/MarcaNegocio.php';
+
+$marcaNegocio = new MarcaNegocio();
+$mensaje = '';
+
+$idMarca = $_GET['id'] ?? null;
+if (!$idMarca) {
+    header('Location: listar.php');
+    exit;
+}
+
+$marca = $marcaNegocio->obtenerMarcaPorId($idMarca);
+if (!$marca) {
+    header('Location: listar.php');
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $resultado = $marcaNegocio->eliminarMarca($_POST['id_marca'] ?? null);
+
+    if ($resultado['exito']) {
+        header('Location: listar.php?mensaje=eliminado');
+        exit;
+    }
+
+    $mensaje = $resultado['mensaje'];
+}
+
+function mostrarValor($valor) {
+    return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -31,9 +67,12 @@
                 <div class="card shadow-sm border-0 border-top border-danger border-4 text-center p-5 w-100" style="max-width: 500px;">
                     <i class="fa-solid fa-triangle-exclamation text-danger mb-4" style="font-size: 4rem;"></i>
                     <h3 class="fw-bold mb-3">¿Eliminar Categoría?</h3>
-                    <p class="text-muted mb-4">LÓGICA PHP: DELETE FROM categorias WHERE id_categoria</p>
-                    <form action="" method="POST">
-                        <input type="hidden" name="id_categoria" value="">
+                    <?php if ($mensaje): ?>
+                    <div class="alert alert-danger"><?php echo mostrarValor($mensaje); ?></div>
+                <?php endif; ?>
+                    <p class="text-muted mb-4">Nombre de la categoria: <b><?php echo mostrarValor($marca['nombre_marca']); ?></b></p>
+                    <form action="eliminar.php?id=<?php echo mostrarValor($marca['id_marca'])?>" method="POST">
+                        <input type="hidden" name="id_marca" value="<?php echo mostrarValor($marca['id_marca']); ?>">
                         <a href="listar.php" class="btn btn-secondary px-4 fw-bold">Cancelar</a>
                         <button type="submit" class="btn btn-danger px-4 fw-bold">Confirmar Eliminación</button>
                     </form>

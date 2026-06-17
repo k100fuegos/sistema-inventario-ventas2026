@@ -63,13 +63,7 @@ function mostrarValor($valor)
                         </form>
                     </div>
 
-                    <?php if ($mensaje === 'creado'): ?>
-                        <div class="alert alert-success">Categoría registrada correctamente</div>
-                    <?php elseif ($mensaje === 'actualizado'): ?>
-                        <div class="alert alert-success">Categoría actualizada correctamente</div>
-                    <?php elseif ($mensaje === 'eliminado'): ?>
-                        <div class="alert alert-success">Categoría eliminada correctamente</div>
-                    <?php endif; ?>
+                    <!--  debería de ir el bloque de mensajes -->
 
                     <div class="col-md-6 text-md-end">
                         <a href="crear.php" class="btn btn-primary fw-bold"><i class="fa-solid fa-plus"></i> Nueva Categoría</a>
@@ -112,6 +106,69 @@ function mostrarValor($valor)
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/js/main.js"></script>
+    <script src="../../../public/js/notificacion.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <?php
+
+    $mensajeToast = '';
+    $tipoToast = '';
+
+    switch ($mensaje) {
+
+        case 'creado':
+            $mensajeToast = 'Categoría registrada correctamente.';
+            $tipoToast = 'success';
+            break;
+
+        case 'actualizado':
+            $mensajeToast = 'Categoría actualizada correctamente.';
+            $tipoToast = 'success';
+            break;
+
+        case 'eliminado':
+            $mensajeToast = 'Categoría eliminada correctamente.';
+            $tipoToast = 'success';
+            break;
+
+        case 'error':
+            $mensajeToast = 'Ha ocurrido un error.';
+            $tipoToast = 'error';
+            break;
+    }
+
+    ?>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+
+        <div
+            id="toastMensaje"
+            class="toast border-0"
+            role="alert"
+            data-mensaje="<?php echo $mensajeToast; ?>"
+            data-tipo="<?php echo $tipoToast; ?>">
+
+            <div class="toast-header">
+
+                <i id="toastIcono"></i>
+
+                <strong id="toastTitulo" class="me-auto"></strong>
+
+                <small>Ahora</small>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="toast">
+                </button>
+
+            </div>
+
+            <div class="toast-body" id="toastCuerpo"></div>
+
+        </div>
+
+    </div>
 </body>
 
 </html>

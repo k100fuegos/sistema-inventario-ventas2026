@@ -58,7 +58,7 @@ class MarcaDatos
     public function eliminarMarca($idMarca)
     {
         $conexion = new Conexion();
-        $conexion->query = 'UPDATE marca
+        $conexion->query = 'UPDATE marcas
                          SET estado_marca = 0
                          WHERE id_marca = :idMarca';
 

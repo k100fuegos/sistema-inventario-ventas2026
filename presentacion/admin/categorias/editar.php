@@ -1,3 +1,46 @@
+<?php
+
+require_once __DIR__ . '/../../../negocio/CategoriaNegocio.php';
+
+$categoriaNegocio = new CategoriaNegocio();
+$errores = [];
+
+$id_categoria = $_GET['id'] ?? null;
+if (!$id_categoria) {
+    header('Location: listar.php');
+    exit;
+}
+
+$categoria = $categoriaNegocio->obtenerCategoriaPorId($id_categoria);
+if (!$categoria) {
+    header('Location: listar.php');
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $datos = [
+        'id_categoria'         => $id_categoria,
+        'nombre_categoria'      => $_POST['nombre_categoria'] ?? '',
+        'descripcion_categoria' => $_POST['descripcion_categoria'] ?? ''
+    ];
+
+    $resultado = $categoriaNegocio->actualizarCategoria($datos);
+
+    if ($resultado['exito']) {
+        header('Location: listar.php?mensaje=actualizado');
+        exit;
+    }
+
+    $errores = $resultado['errores'];
+    $categoria = $datos;
+}
+
+function mostrarValor($valor) {
+    return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -39,20 +82,27 @@
                         <h4 class="fw-bold mb-0 text-warning">Editar Categoría</h4>
                     </div>
                     <div class="card-body p-4">
+
+                    <?php if (!empty($errores)): ?>
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            <?php foreach ($errores as $error): ?>
+                                <li><?php echo mostrarValor($error); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                <?php endif; ?>
                         
-                        <form action="" method="POST">
+                        <form action="editar.php?id=<?php echo mostrarValor($categoria['id_categoria'])?>" method="POST">
                             <input type="hidden" name="id_categoria" value="Imprimir ID">
                             
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Categoría</label>
-                                <input type="text" class="form-control" name="nombre_categoria" value="LÓGICA PHP: Nombre actual" required>
+                                <label class="form-label fw-bold">Nombre de la Categoría</label>
+                                <input type="text" class="form-control" name="nombre_categoria" value="<?php echo mostrarValor($categoria['nombre_categoria']); ?>" required>
                             </div>
                             <div class="mb-4">
-                                <label class="form-label fw-bold">Estado</label>
-                                <select class="form-select" name="estado">
-                                    <option value="1">1 (Activo)</option>
-                                    <option value="0">0 (Inactivo)</option>
-                                </select>
+                                <label class="form-label fw-bold">Descripcion:</label>
+                                <textarea class="form-control" name="descripcion_categoria" rows="3"><?php echo mostrarValor($categoria['descripcion_categoria']); ?></textarea>
                             </div>
                             <hr>
                             <div class="text-end">

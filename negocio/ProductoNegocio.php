@@ -25,8 +25,8 @@ class ProductoNegocio {
             'id_marca'                => (int) $datos['id_marca'],
             'id_categoria'            => (int) $datos['id_categoria'],
             'precio_producto'         => number_format((float) $datos['precio_producto'], 2, '.', ''),
-            'stock_producto'          => (int) $datos['stock_producto'],
-            'estado_producto'         => $datos['estado_producto']];
+            'stock_producto'          => (int) $datos['stock_producto']
+        ];
     }
 
     private function validarProducto($datos) {

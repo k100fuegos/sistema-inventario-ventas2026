@@ -1,3 +1,45 @@
+<?php
+
+require_once __DIR__ . '/../../../negocio/RolNegocio.php';
+
+$rolNegocio = new RolNegocio();
+$errores = [];
+
+$id_rol = $_GET['id'] ?? null;
+if (!$id_rol) {
+    header('Location: listar.php');
+    exit;
+}
+
+$rol = $rolNegocio->obtenerRolPorId($id_rol);
+if (!$rol) {
+    header('Location: listar.php');
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $datos = [
+        'id_rol'         => $id_rol,
+        'nombre_rol'      => $_POST['nombre_rol'] ?? ''
+    ];
+
+    $resultado = $rolNegocio->actualizarRol($datos);
+
+    if ($resultado['exito']) {
+        header('Location: listar.php?mensaje=actualizado');
+        exit;
+    }
+
+    $errores = $resultado['errores'];
+    $categoria = $datos;
+}
+
+function mostrarValor($valor) {
+    return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -39,20 +81,24 @@
                         <h4 class="fw-bold mb-0 text-warning">Editar Categoría</h4>
                     </div>
                     <div class="card-body p-4">
+
+
+                    <?php if (!empty($errores)): ?>
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            <?php foreach ($errores as $error): ?>
+                                <li><?php echo mostrarValor($error); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                <?php endif; ?>
                         
                         <form action="" method="POST">
                             <input type="hidden" name="id_categoria" value="Imprimir ID">
                             
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Categoría</label>
-                                <input type="text" class="form-control" name="nombre_categoria" value="LÓGICA PHP: Nombre actual" required>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">Estado</label>
-                                <select class="form-select" name="estado">
-                                    <option value="1">1 (Activo)</option>
-                                    <option value="0">0 (Inactivo)</option>
-                                </select>
+                                <label class="form-label fw-bold">Nombre del Rol: </label>
+                                <input type="text" class="form-control" name="nombre_rol" value="<?php echo mostrarValor($rol['nombre_rol']); ?>" required>
                             </div>
                             <hr>
                             <div class="text-end">

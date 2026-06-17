@@ -35,7 +35,7 @@ function mostrarValor($valor)
                 <li><a href="../../dashboard.php"><i class="fa-solid fa-house"></i> Panel Principal</a></li>
                 <li><a href="../ventas/crear.php"><i class="fa-solid fa-cart-shopping"></i> Nueva Venta</a></li>
                 <li><a href="../ventas/listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li>
-                <li class="active"><a href="listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li>
+                <li class="active"><a href="../categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li>
                 <li><a href="../productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
                 <li><a href="../clientes/listar.php"><i class="fa-solid fa-users"></i> Clientes</a></li>
                 <li><a href="../usuarios/listar.php"><i class="fa-solid fa-user-shield"></i> Usuarios</a></li>
@@ -91,14 +91,14 @@ function mostrarValor($valor)
                                         <tr>
                                             <td><?php echo mostrarValor($marca['nombre_marca']); ?></td>
                                             <td>
-                                                <a href="editar.php?id=<?php echo mostrarValor($marca['id_marca']); ?>" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
+                                                <a href="editar.php?id=<?php echo mostrarValor($marca['id_marca']); ?>" class="btn btn-sm btn-outline-primary me-1"><i class="fa-solid fa-pen"></i></a>
                                                 <a href="eliminar.php?id=<?php echo mostrarValor($marca['id_marca']); ?>" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="3" class="text-center">No hay marcas registradas</td>
+                                        <td colspan="2" class="text-center text-muted py-3">No hay marcas registradas</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>

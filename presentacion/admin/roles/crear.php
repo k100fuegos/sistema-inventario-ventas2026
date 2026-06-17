@@ -1,3 +1,35 @@
+<?php
+
+require_once __DIR__ . '/../../../negocio/RolNegocio.php';
+
+$rolNegocio = new RolNegocio();
+$errores = [];
+$datos = [
+    'nombre_rol' => ''
+    ];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $datos = [
+        'nombre_rol' => $_POST['nombre_rol'] ?? ''
+    ];
+
+    $resultado = $rolNegocio->crearRol($datos);
+
+    if ($resultado['exito']) {
+        header('Location: listar.php?mensaje=creado');
+        exit;
+    }
+
+    $errores = $resultado['errores'];
+}
+
+function mostrarValor($valor)
+{
+    return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -39,18 +71,22 @@
                         <h4 class="fw-bold mb-0 text-primary">Registrar Nueva Categoría</h4>
                     </div>
                     <div class="card-body p-4">
+
+                        <?php if (!empty($errores)): ?>
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    <?php foreach ($errores as $error): ?>
+                                        <li><?php echo mostrarValor($error); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+
                         
                         <form action="" method="POST">
                             <div class="mb-3">
-                                <label class="form-label fw-bold">nombre_categoria</label>
-                                <input type="text" class="form-control" name="nombre_categoria" required>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">estado</label>
-                                <select class="form-select" name="estado">
-                                    <option value="1">1 (Activo)</option>
-                                    <option value="0">0 (Inactivo)</option>
-                                </select>
+                                <label class="form-label fw-bold">Nombre del Rol: </label>
+                                <input type="text" class="form-control" name="nombre_rol" required>
                             </div>
                             <hr>
                             <div class="text-end">
