@@ -27,7 +27,7 @@ class ClienteDatos
         $conexion = new Conexion();
 
         $conexion->query = "INSERT INTO clientes (nombre_cliente, tipo_cliente, dui_cliente, nit_cliente, nrc_cliente, telefono_cliente, correo_cliente, direccion_cliente, estado_cliente)
-                      VALUES (:nombreCliente, :tipoCliente, :duiCliente, :nrcCliente, :telefonoCliente, :correoCliente, :direccionCliente, 1)";
+                            VALUES (:nombreCliente, :tipoCliente, :duiCliente, :nitCliente, :nrcCliente, :telefonoCliente, :correoCliente, :direccionCliente, 1)";
 
         return $conexion->execute_query([
             ':nombreCliente'        => $cliente['nombre_cliente'],

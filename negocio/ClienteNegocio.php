@@ -54,20 +54,12 @@ class ClienteNegocio
             $errores[] = "El nombre del cliente no debe superar los 150 caracteres";
         }
 
-        if (!empty($datos['dui_cliente']) && !preg_match('/^[0-9]{8}-[0-9]$/', trim($datos['dui_cliente']))) {
-            $errores[] = "El DUI debe tener un formato válido. Ejemplo: 12345678-9";
-        }
-
         if (!empty($datos['nit_cliente']) && strlen(trim($datos['nit_cliente'])) > 17) {
             $errores[] = "El NIT no debe superar los 17 caracteres";
         }
 
         if (!empty($datos['nrc_cliente']) && strlen(trim($datos['nrc_cliente'])) > 20) {
             $errores[] = "El NRC no debe superar los 20 caracteres";
-        }
-
-        if (!empty($datos['telefono_cliente']) && !preg_match('/^[0-9]{4}-?[0-9]{4}$/', trim($datos['telefono_cliente']))) {
-            $errores[] = "El teléfono debe tener un formato válido. Ejemplo: 7777-8888";
         }
 
         if (!empty($datos['correo_cliente']) && !filter_var(trim($datos['correo_cliente']), FILTER_VALIDATE_EMAIL)) {
