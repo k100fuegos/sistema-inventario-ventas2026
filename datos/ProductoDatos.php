@@ -161,4 +161,48 @@ class ProductoDatos
         return $conexion->execute_query([':idProducto' => $idProducto]);
     }
 
+    // NUEVO MÉTODO: Traer solo productos para la venta
+    public function obtenerProductosActivos()
+    {
+        $conexion = new Conexion();
+        $conexion->query = "SELECT
+                            productos.id_producto, productos.codigo_producto, productos.nombre_producto, 
+                            productos.precio_producto, productos.stock_producto, marcas.nombre_marca, categorias.nombre_categoria
+                            FROM productos
+                            INNER JOIN categorias ON productos.id_categoria = categorias.id_categoria
+                            INNER JOIN marcas ON productos.id_marca = marcas.id_marca
+                            WHERE productos.eliminado_producto = 0 
+                            AND productos.estado_producto = 1
+                            AND productos.stock_producto > 0
+                            ORDER BY productos.nombre_producto;";
+
+        return $conexion->get_records();
+    }
+
+    // NUEVO MÉTODO: Reducir stock tras una venta
+    public function reducirStock($idProducto, $cantidad)
+    {
+        $conexion = new Conexion();
+        $conexion->query = "UPDATE productos 
+                            SET stock_producto = stock_producto - :cantidad 
+                            WHERE id_producto = :idProducto 
+                            AND stock_producto >= :cantidad";
+        return $conexion->execute_query([
+            ':idProducto' => $idProducto,
+            ':cantidad' => $cantidad
+        ]);
+    }
+
+    // NUEVO MÉTODO: Aumentar stock tras anular una venta
+    public function aumentarStock($idProducto, $cantidad)
+    {
+        $conexion = new Conexion();
+        $conexion->query = "UPDATE productos 
+                            SET stock_producto = stock_producto + :cantidad 
+                            WHERE id_producto = :idProducto";
+        return $conexion->execute_query([
+            ':idProducto' => $idProducto,
+            ':cantidad' => $cantidad
+        ]);
+    }
 }

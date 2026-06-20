@@ -17,6 +17,11 @@ class ProductoNegocio
         return $this->productoDatos->listarProductos();
     }
 
+    public function listarProductosActivos()
+    {
+        return $this->productoDatos->obtenerProductosActivos();
+    }
+
     private function limpiarDatos($datos)
     {
         return [
