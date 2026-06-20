@@ -29,11 +29,10 @@ if (!$producto) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $imagenActual = $producto['imagen_producto'] ?? 'sin-imagen.png';
-    // Se procesa la imagen enviada desde el input name="imagen"
-    $imagen = procesarImagen($_FILES['imagen'] ?? null, $errores, $imagenActual);
+    $imagen = procesarImagen($_FILES['imagen_producto'] ?? null, $errores, $imagenActual);
 
     $datos = [
-        'id_producto'          => $_POST['id_producto'] ?? '',
+        'id_producto'          => $idProducto,
         'codigo_producto'      => $_POST['codigo_producto'] ?? '',
         'nombre_producto'      => $_POST['nombre_producto'] ?? '',
         'modelo_producto'      => $_POST['modelo_producto'] ?? '',
@@ -42,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'id_categoria'         => $_POST['id_categoria'] ?? '',
         'precio_producto'      => $_POST['precio_producto'] ?? '',
         'stock_producto'       => $_POST['stock_producto'] ?? '',
+        'estado_producto'      => $_POST['estado_producto'] ?? 1,
         'imagen_producto'      => $imagen
     ];
 
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: listar.php?mensaje=actualizado");
             exit;
         } else {
-            $errores = $resultado['errores'];
+            $errores = isset($resultado['errores']) ? $resultado['errores'] : [$resultado['mensaje']];
             $producto = $datos;
         }
     } else {
@@ -168,25 +168,34 @@ function procesarImagen($archivo, &$errores, $imagenActual)
                             <input type="hidden" name="id_producto" value="<?php echo mostrarValor($producto['id_producto']); ?>">
                             
                             <div class="row">
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-3 mb-3">
                                     <label class="form-label fw-bold">Código</label>
                                     <input type="text" class="form-control" name="codigo_producto" value="<?php echo mostrarValor($producto['codigo_producto'] ?? ''); ?>" required>
                                 </div>
-                                <div class="col-md-8 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Nombre del Producto</label>
                                     <input type="text" class="form-control" name="nombre_producto" value="<?php echo mostrarValor($producto['nombre_producto'] ?? ''); ?>" required>
                                 </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label fw-bold">Estado</label>
+                                    <select class="form-select" name="estado_producto" required>
+                                        <option value="1" <?php echo ((int)$producto['estado_producto'] === 1) ? 'selected' : ''; ?>>Activo</option>
+                                        <option value="0" <?php echo ((int)$producto['estado_producto'] === 0) ? 'selected' : ''; ?>>Inactivo</option>
+                                    </select>
+                                </div>
                             </div>
 
-                            
-                            
-                            <div class="row align-items-center mb-4">
+                            <div class="row align-items-center mb-4 mt-2">
                                 <div class="col-md-2 text-center">
                                     <?php
                                         $imagenProducto = $producto['imagen_producto'] ?: 'sin-imagen.png';
-                                        $rutaImagen = $imagenProducto !== 'sin-imagen.png'
+                                        $rutaImagen = $producto['imagen_producto'] !== 'sin-imagen.png'
                                             ? "../../../public/img/productos/{$imagenProducto}"
                                             : "../../../public/img/{$imagenProducto}";
+
+                                        if (empty($imagenProducto) || !file_exists($rutaImagen)) {
+                                            $rutaImagen = "../../../public/img/sin-imagen.png";
+                                        }
                                     ?>
                                     <img src="<?php echo mostrarValor($rutaImagen); ?>" alt="Imagen Actual" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
                                 </div>
@@ -197,15 +206,15 @@ function procesarImagen($archivo, &$errores, $imagenActual)
                                 </div>
                             </div>
 
-
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label class="form-label fw-bold">Modelo</label>
                                     <input type="text" class="form-control" name="modelo_producto" value="<?php echo mostrarValor($producto['modelo_producto'] ?? ''); ?>">
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold">Descripción</label>
-                                <textarea class="form-control" name="descripcion_producto" rows="3"><?php echo mostrarValor($producto['descripcion_producto'] ?? ''); ?></textarea>
+                                <div class="col-md-8 mb-3">
+                                    <label class="form-label fw-bold">Descripción</label>
+                                    <textarea class="form-control" name="descripcion_producto" rows="2"><?php echo mostrarValor($producto['descripcion_producto'] ?? ''); ?></textarea>
+                                </div>
                             </div>
 
                             <div class="row">

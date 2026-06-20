@@ -77,6 +77,7 @@ function mostrarValor($valor)
                                 <tr>
                                     <th>Nombre de Categoría</th>
                                     <th>Descripción</th>
+                                    <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -86,6 +87,13 @@ function mostrarValor($valor)
                                         <tr>
                                             <td><?php echo mostrarValor($categoria['nombre_categoria']); ?></td>
                                             <td><?php echo mostrarValor($categoria['descripcion_categoria']); ?></td>
+                                            <td>
+                                                <?php if ($categoria['estado_categoria'] == 1): ?>
+                                                    <span class="badge bg-success">Activo</span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-secondary">Inactivo</span>
+                                                <?php endif; ?>
+                                            </td>
                                             <td>
                                                 <a href="editar.php?id=<?php echo mostrarValor($categoria['id_categoria']); ?>" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
                                                 <a href="eliminar.php?id=<?php echo mostrarValor($categoria['id_categoria']); ?>" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></a>

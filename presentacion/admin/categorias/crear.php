@@ -6,13 +6,15 @@ $categoriaNegocio = new CategoriaNegocio();
 $errores = [];
 $datos = [
     'nombre_categoria' => '',
-    'descripcion_categoria' => ''
+    'descripcion_categoria' => '',
+    'estado_categoria' => 1
     ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $datos = [
         'nombre_categoria' => $_POST['nombre_categoria'] ?? '',
-        'descripcion_categoria' => $_POST['descripcion_categoria'] ?? ''
+        'descripcion_categoria' => $_POST['descripcion_categoria'] ?? '',
+        'estado_categoria' => $_POST['estado_categoria'] ?? 1
     ];
 
     $resultado = $categoriaNegocio->crearCategoria($datos);
@@ -88,11 +90,22 @@ function mostrarValor($valor)
                         <form action="" method="POST">
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Nombre de la categoria:</label>
-                                <input type="text" class="form-control" name="nombre_categoria" required>
+                                <input type="text" class="form-control" name="nombre_categoria" value="<?php echo mostrarValor($datos['nombre_categoria']); ?>" required>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Descripcion:</label>
-                                <textarea class="form-control" name="descripcion_categoria" rows="3"></textarea>
+                                <textarea class="form-control" name="descripcion_categoria" rows="3"><?php echo mostrarValor($datos['descripcion_categoria']); ?></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Estado:</label>
+                                <select class="form-select" name="estado_categoria">
+                                    <option value="1" <?php echo $datos['estado_categoria'] == '1' ? 'selected' : ''; ?>>Activo</option>
+                                    <option value="0" <?php echo $datos['estado_categoria'] == '0' ? 'selected' : ''; ?>>Inactivo</option>
+                                </select>
+                                <i class="fa-solid fa-circle-info me-1"></i>
+                                <small class="text-muted">
+                                    Las categorías inactivas no podrán seleccionarse al registrar productos.
+                                </small>
                             </div>
                             <hr>
                             <div class="text-end">

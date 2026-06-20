@@ -8,96 +8,49 @@ $productoNegocio = new ProductoNegocio();
 $marcaNegocio = new MarcaNegocio();
 $categoriaNegocio = new CategoriaNegocio();
 
-$productos = $productoNegocio->listarProductos();
 $marcas = $marcaNegocio->listarMarcas();
 $categorias = $categoriaNegocio->listarCategorias();
 
 $errores = [];
-
 $datos = [
-    'codigo_producto'           => '',
-    'nombre_producto'           => '',
-    'modelo_producto'           => '',
-    'descripcion_producto'      => '',
-    'imagen_producto'           => 'sin-imagen.png',
-    'id_marca'                  => '',
-    'id_categoria'              => '',
-    'precio_producto'           => '',
-    'stock_producto'            => ''
+    'codigo_producto'      => '',
+    'nombre_producto'      => '',
+    'modelo_producto'      => '',
+    'descripcion_producto' => '',
+    'id_marca'             => '',
+    'id_categoria'         => '',
+    'precio_producto'      => '',
+    'stock_producto'       => '',
+    'estado_producto'      => 1
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $datos = [
-        'codigo_producto'           => $_POST['codigo_producto'] ?? '',
-        'nombre_producto'           => $_POST['nombre_producto'] ?? '',
-        'modelo_producto'           => $_POST['modelo_producto'] ?? '',
-        'descripcion_producto'      => $_POST['descripcion_producto'] ?? '',
-        'imagen_producto'           => procesarImagen($_FILES['imagen_producto'] ?? null, $errores),
-        'id_marca'                  => $_POST['id_marca'] ?? '',
-        'id_categoria'              => $_POST['id_categoria'] ?? '',
-        'precio_producto'           => $_POST['precio_producto'] ?? '',
-        'stock_producto'            => $_POST['stock_producto'] ?? ''
+        'codigo_producto'      => $_POST['codigo_producto'] ?? '',
+        'nombre_producto'      => $_POST['nombre_producto'] ?? '',
+        'modelo_producto'      => $_POST['modelo_producto'] ?? '',
+        'descripcion_producto' => $_POST['descripcion_producto'] ?? '',
+        'id_marca'             => $_POST['id_marca'] ?? '',
+        'id_categoria'         => $_POST['id_categoria'] ?? '',
+        'precio_producto'      => $_POST['precio_producto'] ?? '',
+        'stock_producto'       => $_POST['stock_producto'] ?? '',
+        'estado_producto'      => $_POST['estado_producto'] ?? 1
     ];
 
-    if (empty($errores)) {
-        $resultado = $productoNegocio->crearProducto($datos);
+    // Enviamos los datos del formulario Y el archivo $_FILES de forma independiente
+    $resultado = $productoNegocio->crearProducto($datos, $_FILES['imagen_producto'] ?? null);
 
-        if ($resultado['exito']) {
-            header("Location: listar.php?mensaje=creado");
-            exit;
-        } else {
-            $errores = $resultado['errores'];
-        }
+    if ($resultado['exito'] || strpos($resultado['mensaje'] ?? '', 'restaurado correctamente') !== false) {
+        header("Location: listar.php?mensaje=creado");
+        exit;
+    } else {
+        $errores = isset($resultado['errores']) ? $resultado['errores'] : [$resultado['mensaje']];
     }
 }
 
-function mostrarValor($valor)
-{
+function mostrarValor($valor) {
     return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
 }
-
-
-function procesarImagen($archivo, &$errores)
-{
-    if (!$archivo || $archivo['error'] === UPLOAD_ERR_NO_FILE) {
-        return 'sin-imagen.png';
-    }
-
-    if ($archivo['error'] !== UPLOAD_ERR_OK) {
-        $errores[] = "Ocurrió un error al subir la imagen.";
-        return 'sin-imagen.png';
-    }
-
-    $extensionesPermitidas = ['jpg', 'jpeg', 'png', 'webp'];
-    $extension = strtolower(pathinfo($archivo['name'], PATHINFO_EXTENSION));
-
-    if (!in_array($extension, $extensionesPermitidas)) {
-        $errores[] = "La imagen debe tener formato JPG, JPEG, PNG o WEBP.";
-        return 'sin-imagen.png';
-    }
-
-    if ($archivo['size'] > 2 * 1024 * 1024) {
-        $errores[] = "La imagen no debe superar los 2 MB.";
-        return 'sin-imagen.png';
-    }
-
-    $directorioDestino = __DIR__ . '/../../../public/img/productos/';
-
-    if (!is_dir($directorioDestino)) {
-        mkdir($directorioDestino, 0777, true);
-    }
-
-    $nombreArchivo = 'producto_' . time() . '_' . rand(1000, 9999) . '.' . $extension;
-    $rutaDestino = $directorioDestino . $nombreArchivo;
-
-    if (!move_uploaded_file($archivo['tmp_name'], $rutaDestino)) {
-        $errores[] = "No se pudo guardar la imagen del producto.";
-        return 'sin-imagen.png';
-    }
-
-    return $nombreArchivo;
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -105,7 +58,7 @@ function procesarImagen($archivo, &$errores)
 
 <head>
     <meta charset="UTF-8">
-    <title>Nuevo Producto - Tecnobyte</title>
+    <title>Nuevo Producto - Technobyte</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="../../../public/css/style.css?v=<?php echo time(); ?>">
@@ -130,15 +83,25 @@ function procesarImagen($archivo, &$errores)
         </nav>
 
         <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-dorado"><i class="fa-solid fa-bars"></i></button>
+                    <div class="ms-auto d-flex align-items-center">
+                        <span class="me-3 fw-bold"><i class="fa-solid fa-circle-user"></i> Administrador</span>
+                        <a href="../../../logout.php" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+                    </div>
+                </div>
+            </nav>
+
             <div class="container-fluid p-4">
-                <div class="card shadow-sm border-0">
+                <div class="card shadow-sm border-0 border-top border-primary border-4">
                     <div class="card-header bg-white pt-4 pb-3">
                         <h4 class="fw-bold mb-0 text-primary">Registrar Nuevo Producto</h4>
                     </div>
                     <div class="card-body p-4">
 
                         <?php if (!empty($errores)): ?>
-                            <div class="alert alert-danger">
+                            <div class="alert alert-danger shadow-sm">
                                 <ul class="mb-0">
                                     <?php foreach ($errores as $error): ?>
                                         <li><?php echo mostrarValor($error); ?></li>
@@ -147,16 +110,23 @@ function procesarImagen($archivo, &$errores)
                             </div>
                         <?php endif; ?>
 
-                        <form action="crear.php" method="POST" enctype="multipart/form-data">
+                        <form action="" method="POST" enctype="multipart/form-data">
 
                             <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Codigo:</label>
-                                    <input type="text" class="form-control" name="codigo_producto" required>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label fw-bold">Código:</label>
+                                    <input type="text" class="form-control" name="codigo_producto" value="<?php echo mostrarValor($datos['codigo_producto']); ?>" required>
                                 </div>
-                                <div class="col-md-8 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Nombre del producto:</label>
-                                    <input type="text" class="form-control" name="nombre_producto" required>
+                                    <input type="text" class="form-control" name="nombre_producto" value="<?php echo mostrarValor($datos['nombre_producto']); ?>" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label fw-bold">Estado:</label>
+                                    <select class="form-select" name="estado_producto" required>
+                                        <option value="1" <?php echo ($datos['estado_producto'] == 1) ? 'selected' : ''; ?>>Activo</option>
+                                        <option value="0" <?php echo ($datos['estado_producto'] == 0) ? 'selected' : ''; ?>>Inactivo</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -165,28 +135,27 @@ function procesarImagen($archivo, &$errores)
                                     <label class="form-label fw-bold">Imagen del Producto (Opcional):</label>
                                     <input type="file" class="form-control" name="imagen_producto" accept=".jpg,.jpeg,.png,.webp">
                                     <div class="form-text">Formatos permitidos: JPG, JPEG, PNG o WEBP. Tamaño máximo: 2 MB.</div>
-                                    <br>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label fw-bold">Modelo:</label>
-                                    <input type="text" class="form-control" name="modelo_producto" required>
+                                    <input type="text" class="form-control" name="modelo_producto" value="<?php echo mostrarValor($datos['modelo_producto']); ?>">
                                 </div>
                                 <div class="col-md-8 mb-3">
-                                    <label class="form-label fw-bold">Descripcion del producto:</label>
-                                     <textarea name="descripcion_producto" id="descripcion_producto" rows="4" class="form-control"></textarea>
+                                    <label class="form-label fw-bold">Descripción del producto:</label>
+                                     <textarea name="descripcion_producto" id="descripcion_producto" rows="2" class="form-control"><?php echo mostrarValor($datos['descripcion_producto']); ?></textarea>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Categoria: </label>
+                                    <label class="form-label fw-bold">Categoría: </label>
                                     <select class="form-select" name="id_categoria" required>
                                         <option value="">Seleccione una categoría...</option>
                                         <?php foreach ($categorias as $categoria): ?>
-                                            <option value="<?php echo mostrarValor($categoria['id_categoria']); ?>">
+                                            <option value="<?php echo mostrarValor($categoria['id_categoria']); ?>" <?php echo ($datos['id_categoria'] == $categoria['id_categoria']) ? 'selected' : ''; ?>>
                                                 <?php echo mostrarValor($categoria['nombre_categoria']); ?>
                                             </option>
                                         <?php endforeach; ?>
@@ -197,7 +166,7 @@ function procesarImagen($archivo, &$errores)
                                     <select class="form-select" name="id_marca" required>
                                         <option value="">Seleccione una marca...</option>
                                         <?php foreach ($marcas as $marca): ?>
-                                            <option value="<?php echo mostrarValor($marca['id_marca']); ?>">
+                                            <option value="<?php echo mostrarValor($marca['id_marca']); ?>" <?php echo ($datos['id_marca'] == $marca['id_marca']) ? 'selected' : ''; ?>>
                                                 <?php echo mostrarValor($marca['nombre_marca']); ?>
                                             </option>
                                         <?php endforeach; ?>
@@ -207,12 +176,12 @@ function procesarImagen($archivo, &$errores)
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">precio ($)</label>
-                                    <input type="number" step="0.01" class="form-control" name="precio_producto" required>
+                                    <label class="form-label fw-bold">Precio ($)</label>
+                                    <input type="number" step="0.01" class="form-control" name="precio_producto" value="<?php echo mostrarValor($datos['precio_producto']); ?>" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">stock</label>
-                                    <input type="number" class="form-control" name="stock_producto" value="0" required>
+                                    <label class="form-label fw-bold">Stock Inicial</label>
+                                    <input type="number" class="form-control" name="stock_producto" value="<?php echo $datos['stock_producto'] === '' ? '0' : mostrarValor($datos['stock_producto']); ?>" required>
                                 </div>
                             </div>
 

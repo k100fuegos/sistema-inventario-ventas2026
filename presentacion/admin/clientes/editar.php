@@ -27,7 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'nrc_cliente'       => $_POST['nrc_cliente'] ?? '',
         'telefono_cliente'  => $_POST['telefono_cliente'] ?? '',
         'correo_cliente'    => $_POST['correo_cliente'] ?? '',
-        'direccion_cliente' => $_POST['direccion_cliente'] ?? ''
+        'direccion_cliente' => $_POST['direccion_cliente'] ?? '',
+        'estado_cliente'    => $_POST['estado_cliente'] ?? 1
     ];
 
     $resultado = $clienteNegocio->actualizarCliente($datos);
@@ -41,7 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cliente = $datos; // Mantiene los datos tipeados en caso de error
 }
 
-function mostrarValor($valor) {
+function mostrarValor($valor)
+{
     return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
 }
 
@@ -49,6 +51,7 @@ function mostrarValor($valor) {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Editar Cliente - Technobyte</title>
@@ -56,6 +59,7 @@ function mostrarValor($valor) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="../../../public/css/style.css?v=<?php echo time(); ?>">
 </head>
+
 <body>
     <div class="d-flex">
         <nav id="sidebar">
@@ -101,24 +105,41 @@ function mostrarValor($valor) {
                                 </ul>
                             </div>
                         <?php endif; ?>
-                        
-                        <form action="editar.php?id=<?php echo mostrarValor($cliente['id_cliente'])?>" method="POST">
+
+                        <form action="editar.php?id=<?php echo mostrarValor($cliente['id_cliente']) ?>" method="POST">
                             <input type="hidden" name="id_cliente" value="<?php echo mostrarValor($cliente['id_cliente']); ?>">
-                            
+
                             <div class="row">
-                                <div class="col-md-8 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Nombre del Cliente <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="nombre_cliente" value="<?php echo mostrarValor($cliente['nombre_cliente']); ?>" required>
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-3 mb-3">
                                     <label class="form-label fw-bold">Tipo <span class="text-danger">*</span></label>
                                     <select class="form-select" name="tipo_cliente" id="tipo_cliente" required>
                                         <option value="PN" <?php echo ($cliente['tipo_cliente'] === 'PN') ? 'selected' : ''; ?>>PN - Persona Natural</option>
                                         <option value="PJ" <?php echo ($cliente['tipo_cliente'] === 'PJ') ? 'selected' : ''; ?>>PJ - Persona Jurídica</option>
                                     </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label fw-bold">Estado <span class="text-danger">*</span></label>
+                                    <select class="form-select" name="estado_cliente" required>
+                                        <option value="1" <?php echo ((int)$cliente['estado_cliente'] === 1) ? 'selected' : ''; ?>>Activo</option>
+                                        <option value="0" <?php echo ((int)$cliente['estado_cliente'] === 0) ? 'selected' : ''; ?>>Inactivo</option>
+                                    </select>
+                        
+                                    <small class="text-muted d-block mt-1">
+                                        <i class="fa-solid fa-circle-info me-1"></i>
+                                        Los clientes inactivos no podrán realizar ventas.
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-12">
                                     <div class="form-text text-secondary">
                                         <i class="fa-solid fa-circle-info me-1"></i>
-                                        Los documentos requeridos cambiarán según el tipo.
+                                        Los documentos requeridos cambiarán según el tipo de cliente.
                                     </div>
                                 </div>
                             </div>
@@ -126,15 +147,15 @@ function mostrarValor($valor) {
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label fw-bold" id="dui_label">DUI</label>
-                                    <input type="text" class="form-control" id="dui_input" name="dui_cliente" placeholder="00000000-0" value="<?php echo mostrarValor($cliente['dui_cliente']); ?>">
+                                    <input type="text" class="form-control" id="dui_input" name="dui_cliente" maxlength="10" placeholder="00000000-0" value="<?php echo mostrarValor($cliente['dui_cliente']); ?>">
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label fw-bold" id="nit_label">NIT</label>
-                                    <input type="text" class="form-control" id="nit_input" name="nit_cliente" placeholder="0000-000000-000-0" value="<?php echo mostrarValor($cliente['nit_cliente']); ?>">
+                                    <input type="text" class="form-control" id="nit_input" name="nit_cliente" maxlength="17" placeholder="0000-000000-000-0" value="<?php echo mostrarValor($cliente['nit_cliente']); ?>">
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label fw-bold" id="nrc_label">NRC</label>
-                                    <input type="text" class="form-control" id="nrc_input" name="nrc_cliente" value="<?php echo mostrarValor($cliente['nrc_cliente']); ?>">
+                                    <input type="text" class="form-control" id="nrc_input" name="nrc_cliente" maxlength="8" value="<?php echo mostrarValor($cliente['nrc_cliente']); ?>">
                                 </div>
                             </div>
 
@@ -172,7 +193,6 @@ function mostrarValor($valor) {
         document.addEventListener("DOMContentLoaded", function() {
 
             const tipo = document.getElementById("tipo_cliente");
-
             const dui = document.getElementById("dui_input");
             const nit = document.getElementById("nit_input");
             const nrc = document.getElementById("nrc_input");
@@ -194,7 +214,7 @@ function mostrarValor($valor) {
                     lblNrc.innerHTML = 'NRC <small class="text-secondary">(No aplica)</small>';
 
                     dui.disabled = false;
-                    if(!dui.value) dui.placeholder = "00000000-0";
+                    if (!dui.value) dui.placeholder = "00000000-0";
                     nit.disabled = false;
                     nrc.disabled = true;
                     nrc.value = "";
@@ -218,9 +238,9 @@ function mostrarValor($valor) {
             }
 
             actualizarFormulario();
-
             tipo.addEventListener("change", actualizarFormulario);
         });
     </script>
 </body>
+
 </html>

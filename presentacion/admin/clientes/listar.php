@@ -48,7 +48,7 @@ function mostrarValor($valor)
                 <div class="container-fluid">
                     <button type="button" id="sidebarCollapse" class="btn btn-dorado"><i class="fa-solid fa-bars"></i></button>
                     <div class="ms-auto d-flex align-items-center">
-                        <span class="me-3 fw-bold"><i class="fa-solid fa-circle-user"></i> LÓGICA PHP</span>
+                        <span class="me-3 fw-bold"><i class="fa-solid fa-circle-user"></i> Administrador</span>
                         <a href="../../../logout.php" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
                     </div>
                 </div>
@@ -63,14 +63,6 @@ function mostrarValor($valor)
                             <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
                         </form>
                     </div>
-
-                    <?php if ($mensaje === 'creado'): ?>
-                        <div class="alert alert-success">Cliente registrado correctamente</div>
-                    <?php elseif ($mensaje === 'actualizado'): ?>
-                        <div class="alert alert-success">Cliente actualizado correctamente</div>
-                    <?php elseif ($mensaje === 'eliminado'): ?>
-                        <div class="alert alert-success">Cliente eliminado correctamente</div>
-                    <?php endif; ?>
 
                     <div class="col-md-6 text-md-end">
                         <a href="crear.php" class="btn btn-primary fw-bold"><i class="fa-solid fa-plus"></i> Nuevo Cliente</a>
@@ -90,6 +82,7 @@ function mostrarValor($valor)
                                     <th>Telefono</th>
                                     <th>Correo</th>
                                     <th>Dirección</th>
+                                    <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -107,6 +100,13 @@ function mostrarValor($valor)
                                             <td><?php echo mostrarValor($cliente['correo_cliente']); ?></td>
                                             <td><?php echo mostrarValor($cliente['direccion_cliente']); ?></td>
                                             <td>
+                                                <?php if ($cliente['estado_cliente'] == 1): ?>
+                                                    <span class="badge bg-success">Activo</span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-secondary">Inactivo</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
                                                 <a href="editar.php?id=<?php echo mostrarValor($cliente['id_cliente']); ?>" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
                                                 <a href="eliminar.php?id=<?php echo mostrarValor($cliente['id_cliente']); ?>" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
                                             </td>
@@ -114,7 +114,7 @@ function mostrarValor($valor)
                                     <?php endforeach;
                                 else: ?>
                                     <tr>
-                                        <td colspan="7" class="text-center">
+                                        <td colspan="9" class="text-center">
                                             No hay clientes registrados
                                         </td>
                                     </tr>
@@ -126,8 +126,72 @@ function mostrarValor($valor)
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/js/main.js"></script>
+    <script src="../../../public/js/notificacion.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <?php
+
+    $mensajeToast = '';
+    $tipoToast = '';
+
+    switch ($mensaje) {
+
+        case 'creado':
+            $mensajeToast = 'Cliente registrada correctamente.';
+            $tipoToast = 'success';
+            break;
+
+        case 'actualizado':
+            $mensajeToast = 'Cliente actualizada correctamente.';
+            $tipoToast = 'success';
+            break;
+
+        case 'eliminado':
+            $mensajeToast = 'Cliente eliminada correctamente.';
+            $tipoToast = 'success';
+            break;
+
+        case 'error':
+            $mensajeToast = 'Ha ocurrido un error.';
+            $tipoToast = 'error';
+            break;
+    }
+
+    ?>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+
+        <div
+            id="toastMensaje"
+            class="toast border-0"
+            role="alert"
+            data-mensaje="<?php echo $mensajeToast; ?>"
+            data-tipo="<?php echo $tipoToast; ?>">
+
+            <div class="toast-header">
+
+                <i id="toastIcono"></i>
+
+                <strong id="toastTitulo" class="me-auto"></strong>
+
+                <small>Ahora</small>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="toast">
+                </button>
+
+            </div>
+
+            <div class="toast-body" id="toastCuerpo"></div>
+
+        </div>
+
+    </div>
 </body>
 
 </html>

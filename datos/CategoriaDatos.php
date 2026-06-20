@@ -11,9 +11,9 @@ class CategoriaDatos
     {
 
         $conexion = new Conexion();
-        $conexion->query = 'SELECT id_categoria, nombre_categoria, descripcion_categoria
+        $conexion->query = 'SELECT id_categoria, nombre_categoria, descripcion_categoria, estado_categoria
                         FROM categorias
-                        WHERE estado_categoria = 1
+                        WHERE eliminado_categoria = 0
                         ORDER BY id_categoria DESC';
 
         return $conexion->get_records();
@@ -22,12 +22,13 @@ class CategoriaDatos
     public function insertarCategoria($categoria)
     {
         $conexion = new Conexion();
-        $conexion->query = 'INSERT INTO categorias (nombre_categoria, descripcion_categoria, estado_categoria)
-                         VALUES (:nombreCategoria, :descripcionCategoria, 1)';
+        $conexion->query = 'INSERT INTO categorias (nombre_categoria, descripcion_categoria, estado_categoria, eliminado_categoria)
+                         VALUES (:nombreCategoria, :descripcionCategoria, :estadoCategoria, 0)';
 
         return $conexion->execute_query([
             ':nombreCategoria' => $categoria['nombre_categoria'],
-            ':descripcionCategoria' => $categoria['descripcion_categoria']
+            ':descripcionCategoria' => $categoria['descripcion_categoria'],
+            ':estadoCategoria' => $categoria['estado_categoria']
         ]);
     }
 
@@ -36,12 +37,15 @@ class CategoriaDatos
         $conexion = new Conexion();
         $conexion->query = 'UPDATE categorias
                          SET nombre_categoria = :nombreCategoria,
-                             descripcion_categoria = :descripcionCategoria
-                         WHERE id_categoria = :idCategoria';
+                             descripcion_categoria = :descripcionCategoria,
+                             estado_categoria = :estadoCategoria
+                         WHERE id_categoria = :idCategoria
+                         AND eliminado_categoria = 0';
 
         return $conexion->execute_query([
             ':nombreCategoria' => $categoria['nombre_categoria'],
             ':descripcionCategoria' => $categoria['descripcion_categoria'],
+            ':estadoCategoria' => $categoria['estado_categoria'],
             ':idCategoria' => $categoria['id_categoria']
         ]);
     }
@@ -49,12 +53,50 @@ class CategoriaDatos
     public function obtenerCategoriaPorId($idCategoria)
     {
         $conexion = new Conexion();
-        $conexion->query = 'SELECT id_categoria, nombre_categoria, descripcion_categoria
+        $conexion->query = 'SELECT id_categoria, nombre_categoria, descripcion_categoria, estado_categoria
                         FROM categorias
-                        WHERE id_categoria = :idCategoria';
+                        WHERE id_categoria = :idCategoria
+                        AND eliminado_categoria = 0
+                        LIMIT 1';
 
         return $conexion->get_record([
             ':idCategoria' => $idCategoria
+        ]);
+    }
+
+    public function obtenerCategoriaPorNombre($nombreCategoria)
+    {
+        $conexion = new Conexion();
+        $conexion->query = 'SELECT id_categoria,
+                               nombre_categoria,
+                               descripcion_categoria,
+                               estado_categoria,
+                               eliminado_categoria
+                        FROM categorias
+                        WHERE nombre_categoria = :nombreCategoria
+                        LIMIT 1';
+
+        return $conexion->get_record([
+            ':nombreCategoria' => $nombreCategoria
+        ]);
+    }
+
+    public function reactivarCategoria($categoria)
+    {
+        $conexion = new Conexion();
+
+        $conexion->query = 'UPDATE categorias
+                        SET nombre_categoria = :nombreCategoria,
+                            descripcion_categoria = :descripcionCategoria,
+                            estado_categoria = :estadoCategoria,
+                            eliminado_categoria = 0
+                        WHERE id_categoria = :idCategoria';
+
+        return $conexion->execute_query([
+            ':nombreCategoria'      => $categoria['nombre_categoria'],
+            ':descripcionCategoria' => $categoria['descripcion_categoria'],
+            ':estadoCategoria'      => $categoria['estado_categoria'],
+            ':idCategoria'          => $categoria['id_categoria']
         ]);
     }
 
@@ -62,7 +104,7 @@ class CategoriaDatos
     {
         $conexion = new Conexion();
         $conexion->query = 'UPDATE categorias
-                         SET estado_categoria = 0
+                         SET eliminado_categoria = 1
                          WHERE id_categoria = :idCategoria';
 
         return $conexion->execute_query([

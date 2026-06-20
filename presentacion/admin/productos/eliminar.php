@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../../../negocio/ProductoNegocio.php';
 
 $productoNegocio = new ProductoNegocio();
+$mensajeError = "";
 
 $idProducto = $_GET['id'] ?? null;
 
@@ -18,12 +19,9 @@ if (!$producto) {
     exit;
 }
 
-$mensajeError = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     $idEliminar = $_POST['id_producto'] ?? null;
-
     $resultado = $productoNegocio->eliminarProducto($idEliminar);
 
     if ($resultado['exito']) {
@@ -34,11 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-/**
- * Mostrar valores de forma segura en HTML.
- * @param string|null $valor Valor que se desea mostrar.
- * @return string Valor escapado.
- */
 function mostrarValor($valor)
 {
     return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
@@ -81,7 +74,7 @@ function mostrarValor($valor)
                     <h3 class="fw-bold mb-3">¿Eliminar Producto?</h3>
 
                     <?php if (!empty($mensajeError)): ?>
-                        <div class="alert alert-danger">
+                        <div class="alert alert-danger shadow-sm">
                             <?php echo mostrarValor($mensajeError); ?>
                         </div>
                     <?php endif; ?>
