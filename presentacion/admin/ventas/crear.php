@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $resultado = $ventaNegocio->crearVenta($datosFormulario, $productosSeleccionados);
 
     if ($resultado['exito']) {
-        header("Location: listar.php?mensaje=creado");
+        header("Location: listar.php?mensaje=creado&id_venta=" . urlencode($resultado['id_venta']));
         exit;
     } else {
         $mensajeError = is_array($resultado['errores']) ? implode(", ", $resultado['errores']) : $resultado['mensaje'];
@@ -345,6 +345,31 @@ function mostrarValor($valor) {
             filtrarClientes();
             filtrarVendedores();
             filtrarProductos();
+
+            // Limpiar al hacer click en los inputs de búsqueda
+            const inputBuscarProducto = document.getElementById('buscar_producto');
+            if (inputBuscarProducto) {
+                inputBuscarProducto.addEventListener('click', function() {
+                    this.value = '';
+                    filtrarProductos();
+                });
+            }
+
+            const inputBuscarCliente = document.getElementById('buscar_cliente');
+            if (inputBuscarCliente) {
+                inputBuscarCliente.addEventListener('click', function() {
+                    this.value = '';
+                    filtrarClientes();
+                });
+            }
+
+            const inputBuscarVendedor = document.getElementById('buscar_vendedor');
+            if (inputBuscarVendedor) {
+                inputBuscarVendedor.addEventListener('click', function() {
+                    this.value = '';
+                    filtrarVendedores();
+                });
+            }
         });
 
         // Lógica del Carrito

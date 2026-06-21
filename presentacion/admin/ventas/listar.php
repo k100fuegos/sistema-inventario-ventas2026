@@ -7,6 +7,7 @@ $ventaNegocio = new VentaNegocio();
 $ventas = $ventaNegocio->listarVentas($buscar);
 
 $mensaje = $_GET['mensaje'] ?? '';
+$idVentaReciente = $_GET['id_venta'] ?? null;
 
 function mostrarValor($valor)
 {
@@ -107,6 +108,7 @@ function mostrarValor($valor)
                                             </td>
                                             <td class="text-center">
                                                 <a href="ver_detalle.php?id=<?php echo $venta['id_venta']; ?>" class="btn btn-sm btn-outline-info" title="Ver Detalle"><i class="fa-solid fa-eye"></i></a>
+                                                <a href="descargar_pdf.php?id=<?php echo $venta['id_venta']; ?>" target="_blank" class="btn btn-sm btn-outline-danger" title="Descargar PDF"><i class="fa-solid fa-file-pdf"></i></a>
                                                 <?php if ($venta['estado_venta'] === 'Realizada' || $venta['estado_venta'] === 'Pendiente'): ?>
                                                     <a href="editar.php?id=<?php echo $venta['id_venta']; ?>" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
                                                     <a href="anular.php?id=<?php echo $venta['id_venta']; ?>" class="btn btn-sm btn-outline-danger" title="Anular"><i class="fa-solid fa-ban"></i></a>
@@ -130,6 +132,27 @@ function mostrarValor($valor)
     <script src="../../../public/js/main.js"></script>
     <script src="../../../public/js/notificacion.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <?php if ($mensaje === 'creado' && $idVentaReciente): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                title: '¡Venta Registrada!',
+                text: '¿Deseas descargar la factura de esta venta en PDF?',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonText: '<i class="fa-solid fa-file-pdf"></i> Descargar PDF',
+                cancelButtonText: 'Cerrar',
+                confirmButtonColor: '#198754',
+                cancelButtonColor: '#6c757d'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.open('descargar_pdf.php?id=<?php echo (int)$idVentaReciente; ?>', '_blank');
+                }
+            });
+        });
+    </script>
+    <?php endif; ?>
 
     <?php
 

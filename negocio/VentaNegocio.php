@@ -127,6 +127,7 @@ class VentaNegocio {
 
         return [
             'exito' => true,
+            'id_venta' => $idNuevaVenta,
             'mensaje' => 'Venta registrada correctamente. Factura: ' . $venta['numero_factura']
         ];
     }

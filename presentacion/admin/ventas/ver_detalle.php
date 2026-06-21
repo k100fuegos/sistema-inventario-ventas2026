@@ -63,10 +63,13 @@ function mostrarValor($valor)
             </nav>
 
             <div class="container-fluid p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="text-dark fw-bold"><i class="fa-solid fa-file-invoice" style="color: var(--color-secundario);"></i> Detalles de Venta</h2>
-                    <a href="listar.php" class="btn btn-secondary fw-bold"><i class="fa-solid fa-arrow-left"></i> Volver al Historial</a>
-                </div>
+                 <div class="d-flex justify-content-between align-items-center mb-4">
+                     <h2 class="text-dark fw-bold"><i class="fa-solid fa-file-invoice" style="color: var(--color-secundario);"></i> Detalles de Venta</h2>
+                     <div>
+                         <a href="descargar_pdf.php?id=<?php echo (int)$id_venta; ?>" target="_blank" class="btn btn-danger fw-bold me-2"><i class="fa-solid fa-file-pdf"></i> Descargar Factura (PDF)</a>
+                         <a href="listar.php" class="btn btn-secondary fw-bold"><i class="fa-solid fa-arrow-left"></i> Volver al Historial</a>
+                     </div>
+                 </div>
 
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header text-white fw-bold" style="background-color: var(--color-primario);">
