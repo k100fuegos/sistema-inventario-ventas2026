@@ -2,8 +2,9 @@
 
 require_once __DIR__ . '/../../../negocio/ProductoNegocio.php';
 
+$buscar = trim($_GET['buscar_producto'] ?? '');
 $productoNegocio = new ProductoNegocio();
-$productos = $productoNegocio->listarProductos();
+$productos = $productoNegocio->listarProductos($buscar);
 
 $mensaje = $_GET['mensaje'] ?? '';
 
@@ -60,8 +61,9 @@ function mostrarValor($valor)
                 <div class="row mb-4 align-items-center">
                     <div class="col-md-6">
                         <form action="" method="GET" class="d-flex">
-                            <input type="text" class="form-control me-2" name="buscar_producto" placeholder="Buscar por código o nombre...">
-                            <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <input type="text" class="form-control me-2" name="buscar_producto" placeholder="Buscar por nombre, código, modelo, categoría o marca..." value="<?php echo mostrarValor($buscar); ?>">
+                            <button type="submit" class="btn btn-outline-primary me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <button type="button" class="btn btn-outline-secondary btn-reset-search" title="Limpiar búsqueda"><i class="fa-solid fa-arrows-rotate"></i></button>
                         </form>
                     </div>
                     <div class="col-md-6 text-md-end">
@@ -143,8 +145,8 @@ function mostrarValor($valor)
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="9" class="text-center py-4">No hay productos registrados</td>
-                                    </tr>
+                                         <td colspan="9" class="text-center py-4">No se encontraron registros</td>
+                                     </tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>

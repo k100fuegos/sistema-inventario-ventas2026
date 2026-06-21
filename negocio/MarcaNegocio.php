@@ -20,9 +20,9 @@ class MarcaNegocio
         ];
     }
 
-    public function listarMarcas()
+    public function listarMarcas($buscar = '')
     {
-        return $this->marcaDatos->listarMarcas();
+        return $this->marcaDatos->listarMarcas($buscar);
     }
 
     private function validarMarca($datos)

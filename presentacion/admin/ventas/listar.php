@@ -2,8 +2,9 @@
 
 require_once '../../../negocio/VentaNegocio.php';
 
+$buscar = trim($_GET['buscar_venta'] ?? '');
 $ventaNegocio = new VentaNegocio();
-$ventas = $ventaNegocio->listarVentas();
+$ventas = $ventaNegocio->listarVentas($buscar);
 
 $mensaje = $_GET['mensaje'] ?? '';
 
@@ -58,8 +59,9 @@ function mostrarValor($valor)
                 <div class="row mb-4 align-items-center">
                     <div class="col-md-6">
                         <form action="" method="GET" class="d-flex">
-                            <input type="text" class="form-control me-2" name="buscar_venta" placeholder="Buscar por número de factura...">
-                            <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <input type="text" class="form-control me-2" name="buscar_venta" placeholder="Buscar por número de factura, cliente o vendedor..." value="<?php echo mostrarValor($buscar); ?>">
+                            <button type="submit" class="btn btn-outline-primary me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <button type="button" class="btn btn-outline-secondary btn-reset-search" title="Limpiar búsqueda"><i class="fa-solid fa-arrows-rotate"></i></button>
                         </form>
                     </div>
                     <div class="col-md-6 text-md-end">
@@ -114,8 +116,8 @@ function mostrarValor($valor)
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="9" class="text-center">No se encontraron ventas registradas.</td>
-                                    </tr>
+                                         <td colspan="9" class="text-center">No se encontraron registros</td>
+                                     </tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>

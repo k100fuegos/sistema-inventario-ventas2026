@@ -4,20 +4,37 @@ require_once __DIR__ . '/Conexion.php';
 
 class ProductoDatos
 {
-    public function listarProductos()
+    public function listarProductos($buscar = '')
     {
         $conexion = new Conexion();
-        $conexion->query = "SELECT
-                            productos.id_producto, productos.codigo_producto, productos.nombre_producto, productos.modelo_producto,
-                            productos.descripcion_producto, productos.imagen_producto, marcas.nombre_marca, categorias.nombre_categoria,
-                            productos.precio_producto, productos.stock_producto, productos.estado_producto
-                            FROM productos
-                            INNER JOIN categorias ON productos.id_categoria = categorias.id_categoria
-                            INNER JOIN marcas ON productos.id_marca = marcas.id_marca
-                            WHERE productos.eliminado_producto = 0
-                            ORDER BY productos.nombre_producto;";
-
-        return $conexion->get_records();
+        if (!empty($buscar)) {
+            $conexion->query = "SELECT
+                                productos.id_producto, productos.codigo_producto, productos.nombre_producto, productos.modelo_producto,
+                                productos.descripcion_producto, productos.imagen_producto, marcas.nombre_marca, categorias.nombre_categoria,
+                                productos.precio_producto, productos.stock_producto, productos.estado_producto
+                                FROM productos
+                                INNER JOIN categorias ON productos.id_categoria = categorias.id_categoria
+                                INNER JOIN marcas ON productos.id_marca = marcas.id_marca
+                                WHERE productos.eliminado_producto = 0
+                                AND (productos.nombre_producto LIKE :buscar 
+                                     OR productos.codigo_producto LIKE :buscar 
+                                     OR productos.modelo_producto LIKE :buscar 
+                                     OR categorias.nombre_categoria LIKE :buscar 
+                                     OR marcas.nombre_marca LIKE :buscar)
+                                ORDER BY productos.nombre_producto;";
+            return $conexion->get_records([':buscar' => '%' . $buscar . '%']);
+        } else {
+            $conexion->query = "SELECT
+                                productos.id_producto, productos.codigo_producto, productos.nombre_producto, productos.modelo_producto,
+                                productos.descripcion_producto, productos.imagen_producto, marcas.nombre_marca, categorias.nombre_categoria,
+                                productos.precio_producto, productos.stock_producto, productos.estado_producto
+                                FROM productos
+                                INNER JOIN categorias ON productos.id_categoria = categorias.id_categoria
+                                INNER JOIN marcas ON productos.id_marca = marcas.id_marca
+                                WHERE productos.eliminado_producto = 0
+                                ORDER BY productos.nombre_producto;";
+            return $conexion->get_records();
+        }
     }
 
     private function valorNulo($valor)

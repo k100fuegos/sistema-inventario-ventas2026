@@ -11,9 +11,9 @@ class ClienteNegocio
         $this->clienteDatos = new ClienteDatos();
     }
 
-    public function listarClientes()
+    public function listarClientes($buscar = '')
     {
-        return $this->clienteDatos->listarClientes();
+        return $this->clienteDatos->listarClientes($buscar);
     }
 
     private function limpiarDatos($datos)

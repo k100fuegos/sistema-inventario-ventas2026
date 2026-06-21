@@ -22,9 +22,9 @@ class CategoriaNegocio
         ];
     }
 
-    public function listarCategorias()
+    public function listarCategorias($buscar = '')
     {
-        return $this->categoriaDatos->listarCategorias();
+        return $this->categoriaDatos->listarCategorias($buscar);
     }
 
     private function validarCategoria($datos)

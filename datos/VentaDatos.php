@@ -4,25 +4,45 @@ require_once __DIR__ . '/Conexion.php';
 
 class VentaDatos
 {
-    public function listarVentas()
+    public function listarVentas($buscar = '')
     {
         $conexion = new Conexion();
-        $conexion->query = "SELECT 
-                                v.id_venta, 
-                                v.numero_factura, 
-                                v.fecha_venta, 
-                                c.nombre_cliente, 
-                                u.nombre_usuario, 
-                                v.subtotal_venta, 
-                                v.iva_venta, 
-                                v.total_venta, 
-                                v.estado_venta 
-                            FROM ventas v
-                            INNER JOIN clientes c ON v.id_cliente = c.id_cliente
-                            INNER JOIN usuarios u ON v.id_usuario = u.id_usuario
-                            ORDER BY v.fecha_venta DESC";
-
-        return $conexion->get_records();
+        if (!empty($buscar)) {
+            $conexion->query = "SELECT 
+                                    v.id_venta, 
+                                    v.numero_factura, 
+                                    v.fecha_venta, 
+                                    c.nombre_cliente, 
+                                    u.nombre_usuario, 
+                                    v.subtotal_venta, 
+                                    v.iva_venta, 
+                                    v.total_venta, 
+                                    v.estado_venta 
+                                FROM ventas v
+                                INNER JOIN clientes c ON v.id_cliente = c.id_cliente
+                                INNER JOIN usuarios u ON v.id_usuario = u.id_usuario
+                                WHERE v.numero_factura LIKE :buscar 
+                                   OR c.nombre_cliente LIKE :buscar 
+                                   OR u.nombre_usuario LIKE :buscar
+                                ORDER BY v.fecha_venta DESC";
+            return $conexion->get_records([':buscar' => '%' . $buscar . '%']);
+        } else {
+            $conexion->query = "SELECT 
+                                    v.id_venta, 
+                                    v.numero_factura, 
+                                    v.fecha_venta, 
+                                    c.nombre_cliente, 
+                                    u.nombre_usuario, 
+                                    v.subtotal_venta, 
+                                    v.iva_venta, 
+                                    v.total_venta, 
+                                    v.estado_venta 
+                                FROM ventas v
+                                INNER JOIN clientes c ON v.id_cliente = c.id_cliente
+                                INNER JOIN usuarios u ON v.id_usuario = u.id_usuario
+                                ORDER BY v.fecha_venta DESC";
+            return $conexion->get_records();
+        }
     }
 
     // Insertar la venta principal y recuperar su ID

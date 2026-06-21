@@ -12,9 +12,9 @@ class ProductoNegocio
         $this->productoDatos = new ProductoDatos();
     }
 
-    public function listarProductos()
+    public function listarProductos($buscar = '')
     {
-        return $this->productoDatos->listarProductos();
+        return $this->productoDatos->listarProductos($buscar);
     }
 
     public function listarProductosActivos()

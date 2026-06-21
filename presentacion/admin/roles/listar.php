@@ -59,7 +59,8 @@ function mostrarValor($valor)
                     <div class="col-md-6">
                         <form action="" method="GET" class="d-flex">
                             <input type="text" class="form-control me-2" name="buscar_categoria" placeholder="Buscar categoría...">
-                            <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <button type="submit" class="btn btn-outline-primary me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <button type="button" class="btn btn-outline-secondary btn-reset-search" title="Limpiar búsqueda"><i class="fa-solid fa-arrows-rotate"></i></button>
                         </form>
                     </div>
 
@@ -98,8 +99,8 @@ function mostrarValor($valor)
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="3" class="text-center">No hay marcas registradas</td>
-                                    </tr>
+                                         <td colspan="2" class="text-center">No se encontraron registros</td>
+                                     </tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>

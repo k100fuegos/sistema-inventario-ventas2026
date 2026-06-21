@@ -5,18 +5,30 @@ require_once __DIR__ . '/Conexion.php';
 class UsuarioDatos
 {
 
-    public function listarUsuarios()
+    public function listarUsuarios($buscar = '')
     {
         $conexion = new Conexion();
-        // Se incluye un INNER JOIN para traer el nombre del rol directamente
-        $conexion->query = "SELECT u.id_usuario, u.id_rol, r.nombre_rol, u.nombre_usuario, 
-                                   u.correo_usuario, u.estado_usuario, u.eliminado_usuario
-                            FROM usuarios u
-                            INNER JOIN roles r ON u.id_rol = r.id_rol
-                            WHERE u.eliminado_usuario = 0 
-                            ORDER BY u.nombre_usuario ASC";
-                            
-        return $conexion->get_records();
+        if (!empty($buscar)) {
+            // Se incluye un INNER JOIN para traer el nombre del rol directamente
+            $conexion->query = "SELECT u.id_usuario, u.id_rol, r.nombre_rol, u.nombre_usuario, 
+                                       u.correo_usuario, u.estado_usuario, u.eliminado_usuario
+                                FROM usuarios u
+                                INNER JOIN roles r ON u.id_rol = r.id_rol
+                                WHERE u.eliminado_usuario = 0 
+                                AND (u.nombre_usuario LIKE :buscar 
+                                     OR r.nombre_rol LIKE :buscar 
+                                     OR IF(u.estado_usuario = 1, 'activo', 'inactivo') LIKE :buscar)
+                                ORDER BY u.nombre_usuario ASC";
+            return $conexion->get_records([':buscar' => '%' . $buscar . '%']);
+        } else {
+            $conexion->query = "SELECT u.id_usuario, u.id_rol, r.nombre_rol, u.nombre_usuario, 
+                                       u.correo_usuario, u.estado_usuario, u.eliminado_usuario
+                                FROM usuarios u
+                                INNER JOIN roles r ON u.id_rol = r.id_rol
+                                WHERE u.eliminado_usuario = 0 
+                                ORDER BY u.nombre_usuario ASC";
+            return $conexion->get_records();
+        }
     }
 
     private function valorNulo($valor)

@@ -10,8 +10,8 @@ class VentaNegocio {
         $this->ventaDatos = new VentaDatos();
     }
 
-    public function listarVentas() {
-        return $this->ventaDatos->listarVentas();
+    public function listarVentas($buscar = '') {
+        return $this->ventaDatos->listarVentas($buscar);
     }
 
     private function limpiarDatos($datos) {

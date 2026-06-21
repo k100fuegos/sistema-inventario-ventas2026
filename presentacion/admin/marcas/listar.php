@@ -2,8 +2,9 @@
 
 require_once __DIR__ . '/../../../negocio/MarcaNegocio.php';
 
+$buscar = trim($_GET['buscar_marca'] ?? '');
 $marcaNegocio = new MarcaNegocio();
-$marcas = $marcaNegocio->listarMarcas();
+$marcas = $marcaNegocio->listarMarcas($buscar);
 $mensaje = $_GET['mensaje'] ?? null;
 
 function mostrarValor($valor)
@@ -60,8 +61,9 @@ function mostrarValor($valor)
                 <div class="row mb-4 align-items-center">
                     <div class="col-md-6">
                         <form action="" method="GET" class="d-flex">
-                            <input type="text" class="form-control me-2" name="buscar_marca" placeholder="Buscar marca...">
-                            <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <input type="text" class="form-control me-2" name="buscar_marca" placeholder="Buscar por nombre o estado (Activo/Inactivo)..." value="<?php echo mostrarValor($buscar); ?>">
+                            <button type="submit" class="btn btn-outline-primary me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <button type="button" class="btn btn-outline-secondary btn-reset-search" title="Limpiar búsqueda"><i class="fa-solid fa-arrows-rotate"></i></button>
                         </form>
                     </div>
                     <div class="col-md-6 text-md-end">
@@ -99,7 +101,7 @@ function mostrarValor($valor)
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan=\"3\" class="text-center text-muted py-3">No hay marcas registradas</td>
+                                        <td colspan="3" class="text-center text-muted py-3">No se encontraron registros</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>

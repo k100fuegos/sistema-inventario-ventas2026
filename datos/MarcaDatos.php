@@ -4,15 +4,23 @@ require_once __DIR__ . '/Conexion.php';
 
 class MarcaDatos
 {
-    public function listarMarcas()
+    public function listarMarcas($buscar = '')
     {
         $conexion = new Conexion();
-        $conexion->query = 'SELECT id_marca, nombre_marca, estado_marca
-                        FROM marcas
-                        WHERE eliminado_marca = 0
-                        ORDER BY id_marca DESC';
-
-        return $conexion->get_records();
+        if (!empty($buscar)) {
+            $conexion->query = "SELECT id_marca, nombre_marca, estado_marca
+                            FROM marcas
+                            WHERE eliminado_marca = 0
+                            AND (nombre_marca LIKE :buscar OR IF(estado_marca = 1, 'activo', 'inactivo') LIKE :buscar)
+                            ORDER BY id_marca DESC";
+            return $conexion->get_records([':buscar' => '%' . $buscar . '%']);
+        } else {
+            $conexion->query = 'SELECT id_marca, nombre_marca, estado_marca
+                            FROM marcas
+                            WHERE eliminado_marca = 0
+                            ORDER BY id_marca DESC';
+            return $conexion->get_records();
+        }
     }
 
     public function insertarMarca($marca)

@@ -7,16 +7,23 @@ class CategoriaDatos
 
 
 
-    public function listarCategorias()
+    public function listarCategorias($buscar = '')
     {
-
         $conexion = new Conexion();
-        $conexion->query = 'SELECT id_categoria, nombre_categoria, descripcion_categoria, estado_categoria
-                        FROM categorias
-                        WHERE eliminado_categoria = 0
-                        ORDER BY id_categoria DESC';
-
-        return $conexion->get_records();
+        if (!empty($buscar)) {
+            $conexion->query = "SELECT id_categoria, nombre_categoria, descripcion_categoria, estado_categoria
+                            FROM categorias
+                            WHERE eliminado_categoria = 0
+                            AND (nombre_categoria LIKE :buscar OR IF(estado_categoria = 1, 'activo', 'inactivo') LIKE :buscar)
+                            ORDER BY id_categoria DESC";
+            return $conexion->get_records([':buscar' => '%' . $buscar . '%']);
+        } else {
+            $conexion->query = 'SELECT id_categoria, nombre_categoria, descripcion_categoria, estado_categoria
+                            FROM categorias
+                            WHERE eliminado_categoria = 0
+                            ORDER BY id_categoria DESC';
+            return $conexion->get_records();
+        }
     }
 
     public function insertarCategoria($categoria)

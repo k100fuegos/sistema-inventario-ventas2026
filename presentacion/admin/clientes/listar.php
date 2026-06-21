@@ -2,8 +2,9 @@
 
 require_once __DIR__  . '/../../../negocio/ClienteNegocio.php';
 
+$buscar = trim($_GET['buscar_cliente'] ?? '');
 $clienteNegocio = new ClienteNegocio();
-$clientes = $clienteNegocio->listarClientes();
+$clientes = $clienteNegocio->listarClientes($buscar);
 
 $mensaje = $_GET['mensaje'] ?? null;
 
@@ -59,8 +60,9 @@ function mostrarValor($valor)
                 <div class="row mb-4 align-items-center">
                     <div class="col-md-6">
                         <form action="" method="GET" class="d-flex">
-                            <input type="text" class="form-control me-2" name="buscar_cliente" placeholder="Buscar por nombre o correo...">
-                            <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <input type="text" class="form-control me-2" name="buscar_cliente" placeholder="Buscar por nombre, DUI, NIT o NRC..." value="<?php echo mostrarValor($buscar); ?>">
+                            <button type="submit" class="btn btn-outline-primary me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <button type="button" class="btn btn-outline-secondary btn-reset-search" title="Limpiar búsqueda"><i class="fa-solid fa-arrows-rotate"></i></button>
                         </form>
                     </div>
 
@@ -114,8 +116,8 @@ function mostrarValor($valor)
                                     <?php endforeach;
                                 else: ?>
                                     <tr>
-                                        <td colspan="9" class="text-center">
-                                            No hay clientes registrados
+                                        <td colspan="10" class="text-center">
+                                            No se encontraron registros
                                         </td>
                                     </tr>
                                 <?php endif; ?>

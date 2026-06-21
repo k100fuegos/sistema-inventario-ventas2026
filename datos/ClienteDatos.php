@@ -4,16 +4,28 @@ require_once __DIR__ . '/Conexion.php';
 
 class ClienteDatos
 {
-    public function listarClientes()
+    public function listarClientes($buscar = '')
     {
         $conexion = new Conexion();
-        $conexion->query = "SELECT id_cliente, nombre_cliente, tipo_cliente, dui_cliente, nit_cliente, nrc_cliente, 
-                                   telefono_cliente, correo_cliente, direccion_cliente, estado_cliente
-                            FROM clientes 
-                            WHERE eliminado_cliente = 0
-                            ORDER BY nombre_cliente ASC";
-                      
-        return $conexion->get_records();
+        if (!empty($buscar)) {
+            $conexion->query = "SELECT id_cliente, nombre_cliente, tipo_cliente, dui_cliente, nit_cliente, nrc_cliente, 
+                                       telefono_cliente, correo_cliente, direccion_cliente, estado_cliente
+                                FROM clientes 
+                                WHERE eliminado_cliente = 0
+                                AND (nombre_cliente LIKE :buscar 
+                                     OR dui_cliente LIKE :buscar 
+                                     OR nit_cliente LIKE :buscar 
+                                     OR nrc_cliente LIKE :buscar)
+                                ORDER BY nombre_cliente ASC";
+            return $conexion->get_records([':buscar' => '%' . $buscar . '%']);
+        } else {
+            $conexion->query = "SELECT id_cliente, nombre_cliente, tipo_cliente, dui_cliente, nit_cliente, nrc_cliente, 
+                                       telefono_cliente, correo_cliente, direccion_cliente, estado_cliente
+                                FROM clientes 
+                                WHERE eliminado_cliente = 0
+                                ORDER BY nombre_cliente ASC";
+            return $conexion->get_records();
+        }
     }
 
     private function valorNulo($valor)
