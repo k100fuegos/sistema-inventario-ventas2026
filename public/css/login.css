@@ -1,0 +1,74 @@
+
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    background: linear-gradient(45deg, #808080 0%, #ffffff 100%);
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.login-card {
+    background-color: #ffffff;
+    border-radius: 20px;
+    overflow: hidden; 
+    width: 100%;
+    max-width: 900px; 
+    min-height: 500px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.login-left {
+    background: linear-gradient(135deg, #001f3f 0%, #01b5e3 100%);
+    padding: 90px;
+    color: white;
+}
+
+
+.login-logo {
+    max-width: 275px; 
+    height: auto;
+    margin-bottom: 20px;
+    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3)); 
+
+}
+.login-right {
+    padding: 50px 40px;
+}
+
+
+.text-cyan {
+    color: #12b5e5 !important;
+}
+
+.bg-cyan {
+    background-color: #12b5e5 !important;
+}
+
+.bg-cyan:hover {
+    background-color: #0fa3ce !important;
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+
+.form-control.rounded-pill {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #ced4da;
+    background-color: #f8f9fa;
+}
+
+.form-control.rounded-pill:focus {
+    box-shadow: 0 0 0 0.25rem rgba(18, 181, 229, 0.25);
+    border-color: #12b5e5;
+    background-color: #ffffff;
+}
+
+.icon-label {
+    font-size: 1.3rem;
+    margin-right: 10px;
+}
