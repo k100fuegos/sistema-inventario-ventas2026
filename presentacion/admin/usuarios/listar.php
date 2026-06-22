@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../../../config/control_acceso.php';
+requerirRol(ROL_ADMIN);
 
 require_once __DIR__  . '/../../../negocio/UsuarioNegocio.php';
 

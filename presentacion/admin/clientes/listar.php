@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../../../config/control_acceso.php';
+requerirRol([ROL_ADMIN, ROL_SUPERVISOR, ROL_VENDEDOR]);
 
 require_once __DIR__  . '/../../../negocio/ClienteNegocio.php';
 

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../../../config/control_acceso.php';
+requerirRol([ROL_ADMIN, ROL_SUPERVISOR]);
 require_once '../../../negocio/VentaNegocio.php';
 
 $id_venta = $_GET['id'] ?? null;

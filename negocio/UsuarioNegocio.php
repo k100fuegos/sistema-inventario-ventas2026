@@ -17,6 +17,32 @@ class UsuarioNegocio
         return $this->usuarioDatos->listarUsuarios($buscar);
     }
 
+    public function iniciarSesion(string $correo, string $password): array
+    {
+        if (empty(trim($correo)) || empty(trim($password))) {
+            return ['status' => false, 'usuario' => null, 'mensaje' => 'El correo y la contraseña son obligatorios.'];
+        }
+
+        $usuario = $this->usuarioDatos->buscarPorCorreo(trim($correo));
+
+        if (!$usuario) {
+            return ['status' => false, 'usuario' => null, 'mensaje' => 'Correo o contraseña incorrectos.'];
+        }
+
+        if ((int) $usuario['estado_usuario'] !== 1) {
+            return ['status' => false, 'usuario' => null, 'mensaje' => 'Tu cuenta está desactivada. Contacta al Administrador.'];
+        }
+
+        $passwordCorrecta = password_verify($password, $usuario['password_usuario'])
+            || $password === $usuario['password_usuario'];
+
+        if (!$passwordCorrecta) {
+            return ['status' => false, 'usuario' => null, 'mensaje' => 'Correo o contraseña incorrectos.'];
+        }
+
+        return ['status' => true, 'usuario' => $usuario, 'mensaje' => 'Inicio de sesión exitoso.'];
+    }
+
     private function limpiarDatos($datos)
     {
         return [

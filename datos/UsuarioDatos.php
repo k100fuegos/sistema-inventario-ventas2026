@@ -100,4 +100,19 @@ class UsuarioDatos
             ':idUsuario' => $idUsuario
         ]);
     }
+
+    public function buscarPorCorreo(string $correo)
+    {
+        $conexion = new Conexion();
+        $conexion->query = "SELECT u.id_usuario, u.id_rol, r.nombre_rol,
+                                   u.nombre_usuario AS nombre, u.correo_usuario,
+                                   u.password_usuario, u.estado_usuario
+                            FROM usuarios u
+                            INNER JOIN roles r ON u.id_rol = r.id_rol
+                            WHERE u.correo_usuario = :correo
+                              AND u.eliminado_usuario = 0
+                            LIMIT 1";
+
+        return $conexion->get_record([':correo' => $correo]);
+    }
 }

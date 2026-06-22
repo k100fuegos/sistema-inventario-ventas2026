@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['id_rol']     = $respuesta['usuario']['id_rol'];
         $_SESSION['nombre']     = $respuesta['usuario']['nombre'];
         $_SESSION['nombre_rol'] = $respuesta['usuario']['nombre_rol'];
-        $_SESSION['dui']        = $respuesta['usuario']['dui'];
         
         header("Location: presentacion/dashboard.php");
         exit();
