@@ -1,4 +1,6 @@
 <?php
+require_once '../../../config/control_acceso.php';
+requerirLogin();
 
 require_once '../../../negocio/VentaNegocio.php';
 
@@ -38,6 +40,7 @@ function mostrarValor($valor)
                 <li><a href="crear.php"><i class="fa-solid fa-cart-shopping"></i> Nueva Venta</a></li>
                 <li class="active"><a href="listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li>
                 <li><a href="../categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li>
+                <li><a href="../marcas/listar.php"><i class="fa-solid fa-award"></i> Marcas</a></li>
                 <li><a href="../productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
                 <li><a href="../clientes/listar.php"><i class="fa-solid fa-users"></i> Clientes</a></li>
                 <li><a href="../usuarios/listar.php"><i class="fa-solid fa-user-shield"></i> Usuarios</a></li>
@@ -49,7 +52,7 @@ function mostrarValor($valor)
                 <div class="container-fluid">
                     <button type="button" id="sidebarCollapse" class="btn btn-dorado"><i class="fa-solid fa-bars"></i></button>
                     <div class="ms-auto d-flex align-items-center">
-                        <span class="me-3 fw-bold"><i class="fa-solid fa-circle-user"></i> LÓGICA PHP</span>
+                        <span class="me-3 fw-bold"><i class="fa-solid fa-circle-user"></i> <?php echo isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Administrador'; ?></span>
                         <a href="../../../logout.php" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
                     </div>
                 </div>
@@ -65,7 +68,8 @@ function mostrarValor($valor)
                             <button type="button" class="btn btn-outline-secondary btn-reset-search" title="Limpiar búsqueda"><i class="fa-solid fa-arrows-rotate"></i></button>
                         </form>
                     </div>
-                    <div class="col-md-6 text-md-end">
+                    
+<div class="col-md-6 text-md-end">
                         <a href="crear.php" class="btn btn-success fw-bold"><i class="fa-solid fa-cart-plus"></i> Ir al Punto de Venta</a>
                     </div>
                 </div>
@@ -160,11 +164,6 @@ function mostrarValor($valor)
     $tipoToast = '';
 
     switch ($mensaje) {
-
-        case 'creado':
-            $mensajeToast = 'Venta registrada correctamente.';
-            $tipoToast = 'success';
-            break;
 
         case 'actualizado':
             $mensajeToast = 'Venta actualizada correctamente.';

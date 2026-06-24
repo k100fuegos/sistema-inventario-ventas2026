@@ -69,6 +69,7 @@ function mostrarValor($valor)
                 <li><a href="../ventas/crear.php"><i class="fa-solid fa-cart-shopping"></i> Nueva Venta</a></li>
                 <li><a href="../ventas/listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li>
                 <li><a href="../categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li>
+                <li><a href="../marcas/listar.php"><i class="fa-solid fa-award"></i> Marcas</a></li>
                 <li><a href="../productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
                 <li><a href="../clientes/listar.php"><i class="fa-solid fa-users"></i> Clientes</a></li>
                 <li class="active"><a href="listar.php"><i class="fa-solid fa-user-shield"></i> Usuarios</a></li>
@@ -97,14 +98,14 @@ function mostrarValor($valor)
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Nombre del usuario:</label>
-                                    <input type="text" class="form-control" name="nombre_usuario" required>
+                                    <input type="text" class="form-control" name="nombre_usuario" value="<?php echo mostrarValor($datos['nombre_usuario']); ?>" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Rol: </label>
                                     <select class="form-select" name="id_rol" required>
                                         <option value="">Seleccione un rol...</option>
                                         <?php foreach ($roles as $rol): ?>
-                                            <option value="<?php echo mostrarValor($rol['id_rol']); ?>">
+                                            <option value="<?php echo mostrarValor($rol['id_rol']); ?>" <?php echo ($datos['id_rol'] == $rol['id_rol']) ? 'selected' : ''; ?>>
                                                 <?php echo mostrarValor($rol['nombre_rol']); ?>
                                             </option>
                                         <?php endforeach; ?>
@@ -114,13 +115,13 @@ function mostrarValor($valor)
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Correo:</label>
-                                    <input type="email" class="form-control" name="correo_usuario" required>
+                                    <input type="email" class="form-control" name="correo_usuario" value="<?php echo mostrarValor($datos['correo_usuario']); ?>" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Estado del usuario:</label>
                                 <select class="form-select" name="estado_usuario">
-                                    <option value="1">Activo</option>
-                                    <option value="0">Inactivo</option>
+                                    <option value="1" <?php echo ($datos['estado_usuario'] == 1) ? 'selected' : ''; ?>>Activo</option>
+                                    <option value="0" <?php echo ($datos['estado_usuario'] === '0') ? 'selected' : ''; ?>>Inactivo</option>
                                 </select>
                                 </div>
                             </div>

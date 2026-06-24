@@ -89,6 +89,21 @@ class UsuarioDatos
         ]);
     }
 
+    public function obtenerUsuarioPorCorreo($correo)
+    {
+        $conexion = new Conexion();
+        $conexion->query = "SELECT u.id_usuario, u.id_rol, r.nombre_rol, u.nombre_usuario, 
+                                   u.correo_usuario, u.password_usuario, u.estado_usuario, u.eliminado_usuario
+                            FROM usuarios u
+                            INNER JOIN roles r ON u.id_rol = r.id_rol
+                            WHERE u.correo_usuario = :correoUsuario
+                            AND u.eliminado_usuario = 0";
+                            
+        return $conexion->get_record([
+            ':correoUsuario' => $correo
+        ]);
+    }
+
     public function eliminarUsuario($idUsuario)
     {
         $conexion = new Conexion();

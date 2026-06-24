@@ -112,57 +112,71 @@ function mostrarValor($valor)
         </div>
     </div>
     
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../public/js/main.js"></script>
+    <script src="../../../public/js/notificacion.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <?php
+
     $mensajeToast = '';
     $tipoToast = '';
 
     switch ($mensaje) {
+
         case 'creado':
             $mensajeToast = 'Marca registrada correctamente.';
             $tipoToast = 'success';
             break;
+
         case 'actualizado':
             $mensajeToast = 'Marca actualizada correctamente.';
             $tipoToast = 'success';
             break;
+
         case 'eliminado':
             $mensajeToast = 'Marca eliminada correctamente.';
             $tipoToast = 'success';
             break;
+
         case 'error':
             $mensajeToast = 'Ha ocurrido un error.';
             $tipoToast = 'error';
             break;
     }
+
     ?>
 
-    <?php if ($mensajeToast): ?>
     <div class="toast-container position-fixed top-0 end-0 p-3">
-        <div id="toastMensaje" class="toast border-0" role="alert" data-mensaje="<?php echo $mensajeToast; ?>" data-tipo="<?php echo $tipoToast; ?>">
-            <div class="toast-header bg-<?php echo $tipoToast; ?> text-white">
-                <i id="toastIcono" class="fa-solid fa-circle-check me-2"></i>
-                <strong id="toastTitulo" class="me-auto">Éxito</strong>
-                <small>Ahora</small>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-            </div>
-            <div class="toast-body">
-                <?php echo $mensajeToast; ?>
-            </div>
-        </div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var toastElList = [].slice.call(document.querySelectorAll('.toast'))
-            var toastList = toastElList.map(function (toastEl) {
-                return new bootstrap.Toast(toastEl, { autohide: true, delay: 3000 })
-            });
-            toastList.forEach(toast => toast.show());
-        });
-    </script>
-    <?php endif; ?>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../../public/js/main.js"></script>
+        <div
+            id="toastMensaje"
+            class="toast border-0"
+            role="alert"
+            data-mensaje="<?php echo $mensajeToast; ?>"
+            data-tipo="<?php echo $tipoToast; ?>">
+
+            <div class="toast-header">
+
+                <i id="toastIcono"></i>
+
+                <strong id="toastTitulo" class="me-auto"></strong>
+
+                <small>Ahora</small>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="toast">
+                </button>
+
+            </div>
+
+            <div class="toast-body" id="toastCuerpo"></div>
+
+        </div>
+
+    </div>
 </body>
 
 </html>

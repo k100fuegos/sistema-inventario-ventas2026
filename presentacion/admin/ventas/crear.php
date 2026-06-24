@@ -1,4 +1,8 @@
 <?php
+require_once '../../../config/control_acceso.php';
+requerirLogin();
+requerirRol([ROL_ADMIN, ROL_VENDEDOR]);
+
 require_once '../../../negocio/VentaNegocio.php';
 require_once '../../../negocio/ClienteNegocio.php';
 require_once '../../../negocio/UsuarioNegocio.php';
@@ -60,7 +64,7 @@ function mostrarValor($valor) {
     <link rel="stylesheet" href="../../../public/css/style.css?v=<?php echo time(); ?>">
     <style>
         .carrito-container {
-            max-height: 400px;
+            height: 350px;
             overflow-y: auto;
         }
         .select-list {
@@ -71,7 +75,6 @@ function mostrarValor($valor) {
 </head>
 <body>
     <div class="d-flex">
-        <!-- SIDEBAR -->
         <nav id="sidebar">
             <div class="sidebar-header d-flex align-items-center justify-content-center py-3">
                 <img src="../../../public/img/logo-nav.svg" alt="Logo" class="img-fluid me-2" style="max-width: 40px;">
@@ -82,6 +85,7 @@ function mostrarValor($valor) {
                 <li class="active"><a href="crear.php"><i class="fa-solid fa-cart-shopping"></i> Nueva Venta</a></li>
                 <li><a href="listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li>
                 <li><a href="../categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li>
+                <li><a href="../marcas/listar.php"><i class="fa-solid fa-award"></i> Marcas</a></li>
                 <li><a href="../productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
                 <li><a href="../clientes/listar.php"><i class="fa-solid fa-users"></i> Clientes</a></li>
                 <li><a href="../usuarios/listar.php"><i class="fa-solid fa-user-shield"></i> Usuarios</a></li>
@@ -93,7 +97,7 @@ function mostrarValor($valor) {
                 <div class="container-fluid">
                     <button type="button" id="sidebarCollapse" class="btn btn-dorado"><i class="fa-solid fa-bars"></i></button>
                     <div class="ms-auto d-flex align-items-center">
-                        <span class="me-3 fw-bold"><i class="fa-solid fa-circle-user"></i> LÓGICA PHP</span>
+                        <span class="me-3 fw-bold"><i class="fa-solid fa-circle-user"></i> <?php echo isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Administrador'; ?></span>
                         <a href="../../../logout.php" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
                     </div>
                 </div>
@@ -113,30 +117,30 @@ function mostrarValor($valor) {
 
                  <form action="" method="POST" id="formNuevaVenta" onsubmit="return validarAntesDeEnviar()">
                      
-                     <!-- Panel Superior (Ancho Completo): Datos de Facturación -->
                      <div class="card shadow-sm border-0 mb-4">
                          <div class="card-header text-white fw-bold" style="background-color: var(--color-primario);">
                              <i class="fa-solid fa-user-tag"></i> Datos de Facturación
                          </div>
-                         <div class="card-body py-2">
-                             <div class="row align-items-start">
-                                 <!-- Fecha y Estado -->
-                                 <div class="col-md-2 mb-2">
+                         <div class="card-body p-4"> <div class="row mb-3">
+                                 <div class="col-md-6 mb-2">
                                      <label class="form-label fw-bold mb-1">Fecha de Venta</label>
-                                     <div class="form-control-plaintext text-muted fw-bold">
+                                     <div class="form-control-plaintext text-muted fw-bold border rounded px-3 bg-light">
                                          <i class="fa-regular fa-calendar"></i> <?php echo date('d/m/Y h:i A'); ?>
                                      </div>
                                      <input type="hidden" name="fecha_venta" value="<?php echo date('Y-m-d\TH:i'); ?>">
-                                     
-                                     <label for="estado_venta" class="form-label fw-bold mb-1 mt-2">Estado</label>
-                                     <select class="form-select form-select-sm" id="estado_venta" name="estado_venta" required>
+                                 </div>
+                                 
+                                 <div class="col-md-6 mb-2">
+                                     <label for="estado_venta" class="form-label fw-bold mb-1">Estado de la Venta</label>
+                                     <select class="form-select" id="estado_venta" name="estado_venta" required>
                                          <option value="Realizada" selected>Realizada</option>
                                          <option value="Pendiente">Pendiente</option>
                                      </select>
                                  </div>
+                             </div>
 
-                                 <!-- Cliente -->
-                                 <div class="col-md-5 mb-2">
+                             <hr class="text-muted mb-4 opacity-25"> <div class="row">
+                                 <div class="col-md-6 mb-2">
                                      <label class="form-label fw-bold d-flex justify-content-between align-items-center mb-1">
                                          <span>Cliente <span class="text-danger">*</span></span>
                                          <a href="../clientes/crear.php" class="btn btn-sm btn-outline-primary py-0 px-2" tabindex="-1">
@@ -145,46 +149,39 @@ function mostrarValor($valor) {
                                      </label>
                                      <div class="input-group mb-2">
                                          <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass" style="color: var(--color-secundario);"></i></span>
-                                         <input type="text" id="buscar_cliente" class="form-control" placeholder="Escribe el nombre, DUI, NIT o NRC para filtrar..." onkeyup="filtrarClientes()">
+                                         <input type="text" id="buscar_cliente" class="form-control" placeholder="Escribe el nombre, DUI, NIT o NRC..." onkeyup="filtrarClientes()">
                                      </div>
-                                     <select class="form-select select-list bg-light" id="id_cliente" name="id_cliente" size="4" required>
-                                         <!-- Opciones inyectadas por JS -->
-                                     </select>
+                                     <select class="form-select select-list bg-light shadow-sm" id="id_cliente" name="id_cliente" size="4" required>
+                                         </select>
                                  </div>
 
-                                 <!-- Vendedor -->
-                                 <div class="col-md-5 mb-2">
-                                     <label class="form-label fw-bold">Vendedor <span class="text-danger">*</span></label>
+                                 <div class="col-md-6 mb-2">
+                                     <label class="form-label fw-bold mb-1">Vendedor <span class="text-danger">*</span></label>
                                      <div class="input-group mb-2">
                                          <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass" style="color: var(--color-secundario);"></i></span>
-                                         <input type="text" id="buscar_vendedor" class="form-control" placeholder="Escribe el nombre del vendedor para filtrar..." onkeyup="filtrarVendedores()">
+                                         <input type="text" id="buscar_vendedor" class="form-control" placeholder="Escribe el nombre del vendedor..." onkeyup="filtrarVendedores()">
                                      </div>
-                                     <select class="form-select select-list bg-light" id="id_usuario" name="id_usuario" size="4" required>
-                                         <!-- Opciones inyectadas por JS -->
-                                     </select>
+                                     <select class="form-select select-list bg-light shadow-sm" id="id_usuario" name="id_usuario" size="4" required>
+                                         </select>
                                  </div>
                              </div>
+
                          </div>
                      </div>
 
-                     <!-- Panel Inferior: Buscador de Productos y Carrito -->
-                     <div class="row">
-                         <!-- Columna Izquierda: Buscador de Productos -->
-                         <div class="col-md-4 mb-4">
-                             <div class="card shadow-sm border-0">
-                                 <div class="card-header text-white fw-bold" style="background-color: var(--color-secundario);">
+                     <div class="row gx-4"> <div class="col-md-4 mb-4">
+                             <div class="card shadow-sm border-0 h-100"> <div class="card-header text-white fw-bold" style="background-color: var(--color-secundario);">
                                      <i class="fa-solid fa-magnifying-glass"></i> Agregar Producto
                                  </div>
-                                 <div class="card-body">
+                                 <div class="card-body p-4">
                                      <div class="mb-3">
                                          <label class="form-label fw-bold">Buscar Producto</label>
-                                         <input type="text" id="buscar_producto" class="form-control mb-2" placeholder="Escribe nombre o código..." onkeyup="filtrarProductos()">
-                                         <select class="form-select select-list bg-light" id="selector_producto" size="8">
-                                             <!-- Opciones inyectadas por JS -->
-                                         </select>
+                                         <input type="text" id="buscar_producto" class="form-control mb-3 shadow-sm" placeholder="Escribe nombre o código..." onkeyup="filtrarProductos()">
+                                         <select class="form-select select-list bg-light shadow-sm" id="selector_producto" size="8">
+                                             </select>
                                      </div>
-                                     <div class="d-grid">
-                                         <button type="button" class="btn fw-bold text-white shadow-sm" style="background-color: var(--color-primario);" onclick="agregarAlCarrito()">
+                                     <div class="d-grid mt-4">
+                                         <button type="button" class="btn fw-bold text-white shadow" style="background-color: var(--color-primario); padding: 12px;" onclick="agregarAlCarrito()">
                                              <i class="fa-solid fa-plus"></i> Añadir al Carrito
                                          </button>
                                      </div>
@@ -192,15 +189,14 @@ function mostrarValor($valor) {
                              </div>
                          </div>
 
-                         <!-- Columna Derecha: Carrito de Compras -->
-                         <div class="col-md-8">
+                         <div class="col-md-8 mb-4">
                              <div class="card shadow-sm border-0 h-100">
                                  <div class="card-header text-white fw-bold" style="background-color: var(--color-primario);">
                                      <i class="fa-solid fa-cart-shopping"></i> Detalles del Carrito
                                  </div>
                                  
-                                 <div class="card-body d-flex flex-column">
-                                     <div class="carrito-container flex-grow-1 border rounded mb-3">
+                                 <div class="card-body d-flex flex-column p-4">
+                                     <div class="carrito-container flex-grow-1 border rounded mb-4 shadow-sm">
                                          <table class="table table-hover table-striped mb-0 text-center align-middle" id="tablaCarrito">
                                              <thead class="table-dark sticky-top">
                                                  <tr>
@@ -220,12 +216,10 @@ function mostrarValor($valor) {
                                          </table>
                                      </div>
 
-                                     <!-- Contenedor dinámico para inputs ocultos (se genera al hacer submit) -->
                                      <div id="inputsOcultosCarrito"></div>
 
-                                     <!-- Resumen Financiero -->
-                                     <div class="card bg-light border-0">
-                                         <div class="card-body">
+                                     <div class="card bg-light border-0 shadow-sm mt-auto">
+                                         <div class="card-body p-4">
                                              <div class="row text-end align-items-center">
                                                  <div class="col-8 text-muted fw-bold">Subtotal Venta:</div>
                                                  <div class="col-4 fw-bold fs-5" id="lblSubtotal">$ 0.00</div>
@@ -233,14 +227,14 @@ function mostrarValor($valor) {
                                                  <div class="col-8 text-muted fw-bold">IVA (13%):</div>
                                                  <div class="col-4 fw-bold text-danger fs-5" id="lblIva">+ $ 0.00</div>
                                                  
-                                                 <div class="col-8 text-dark fw-bold fs-4 mt-2">Total a Pagar:</div>
-                                                 <div class="col-4 text-success fw-bold fs-3 mt-2" id="lblTotal">$ 0.00</div>
+                                                 <div class="col-8 text-dark fw-bold fs-4 mt-3">Total a Pagar:</div>
+                                                 <div class="col-4 text-success fw-bold fs-3 mt-3" id="lblTotal">$ 0.00</div>
                                              </div>
                                          </div>
                                      </div>
 
                                      <div class="d-grid mt-4">
-                                         <button type="submit" class="btn btn-lg text-white fw-bold shadow" style="background-color: var(--color-secundario);">
+                                         <button type="submit" class="btn btn-lg text-white fw-bold shadow" style="background-color: var(--color-secundario); padding: 15px;">
                                              <i class="fa-solid fa-check-circle"></i> Procesar Factura
                                          </button>
                                      </div>
@@ -253,7 +247,6 @@ function mostrarValor($valor) {
         </div>
     </div>
 
-    <!-- Carga de datos iniciales en variables JS -->
     <script>
         let bdClientes = <?php echo json_encode($clientes); ?>;
         const bdUsuarios = <?php echo json_encode($usuarios); ?>;

@@ -15,10 +15,16 @@ body {
 #sidebar {
     min-width: 250px;
     max-width: 250px;
-    min-height: 100vh;
+    height: 100vh;
     background-color: var(--color-primario);
     color: var(--color-texto-sidebar);
     transition: all 0.3s;
+    
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    overflow-y: auto;
 }
 
 #sidebar.active {
@@ -58,8 +64,15 @@ body {
 
 /* --- Contenido Principal --- */
 #content {
-    width: 100%;
+    width: calc(100% - 250px); 
+    margin-left: 250px; 
     transition: all 0.3s;
+}
+
+#sidebar.active ~ #content,
+#sidebar.active + #content {
+    margin-left: 0;
+    width: 100%;
 }
 
 .navbar {

@@ -38,6 +38,7 @@ function mostrarValor($valor)
                 <li><a href="../ventas/crear.php"><i class="fa-solid fa-cart-shopping"></i> Nueva Venta</a></li>
                 <li><a href="../ventas/listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li>
                 <li><a href="../categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li>
+                <li><a href="../marcas/listar.php"><i class="fa-solid fa-award"></i> Marcas</a></li>
                 <li><a href="../productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
                 <li class="active"><a href="listar.php"><i class="fa-solid fa-users"></i> Clientes</a></li>
                 <li><a href="../usuarios/listar.php"><i class="fa-solid fa-user-shield"></i> Usuarios</a></li>
@@ -66,7 +67,8 @@ function mostrarValor($valor)
                         </form>
                     </div>
 
-                    <div class="col-md-6 text-md-end">
+                    
+<div class="col-md-6 text-md-end">
                         <a href="crear.php" class="btn btn-primary fw-bold"><i class="fa-solid fa-plus"></i> Nuevo Cliente</a>
                     </div>
                 </div>

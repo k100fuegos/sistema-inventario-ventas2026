@@ -12,6 +12,37 @@ class UsuarioNegocio
         $this->usuarioDatos = new UsuarioDatos();
     }
 
+    public function iniciarSesion($correo, $password)
+    {
+        if (empty(trim($correo)) || empty(trim($password))) {
+            return ['status' => false, 'mensaje' => 'El correo y la contraseña son obligatorios'];
+        }
+
+        $usuario = $this->usuarioDatos->obtenerUsuarioPorCorreo($correo);
+
+        if ($usuario) {
+            if ($usuario['estado_usuario'] != 1) {
+                return ['status' => false, 'mensaje' => 'El usuario se encuentra inactivo'];
+            }
+
+            // Validar hash o texto plano para entorno de pruebas
+            if (password_verify($password, $usuario['password_usuario']) || $password === $usuario['password_usuario']) {
+                $usuarioLogin = [
+                    'id_usuario' => $usuario['id_usuario'],
+                    'id_rol'     => $usuario['id_rol'],
+                    'nombre'     => $usuario['nombre_usuario'],
+                    'nombre_rol' => $usuario['nombre_rol'],
+                    'dui'        => $usuario['dui'] ?? ''
+                ];
+                return ['status' => true, 'usuario' => $usuarioLogin];
+            } else {
+                return ['status' => false, 'mensaje' => 'La contraseña es incorrecta'];
+            }
+        } else {
+            return ['status' => false, 'mensaje' => 'No se encontró un usuario con ese correo'];
+        }
+    }
+
     public function listarUsuarios($buscar = '')
     {
         return $this->usuarioDatos->listarUsuarios($buscar);
