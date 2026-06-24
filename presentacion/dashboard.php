@@ -87,12 +87,12 @@ try {
             <ul class="list-unstyled components">
                 <li class="active"><a href="dashboard.php"><i class="fa-solid fa-house"></i> Panel Principal</a></li>
                 <li><a href="admin/ventas/crear.php"><i class="fa-solid fa-cart-shopping"></i> Nueva Venta</a></li>
-                <li><a href="admin/ventas/listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li>
-                <li><a href="admin/categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li>
-                <li><a href="admin/marcas/listar.php"><i class="fa-solid fa-award"></i> Marcas</a></li>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="admin/ventas/listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li><?php endif; ?>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="admin/categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li><?php endif; ?>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="admin/marcas/listar.php"><i class="fa-solid fa-award"></i> Marcas</a></li><?php endif; ?>
                 <li><a href="admin/productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
                 <li><a href="admin/clientes/listar.php"><i class="fa-solid fa-users"></i> Clientes</a></li>
-                <li><a href="admin/usuarios/listar.php"><i class="fa-solid fa-user-shield"></i> Usuarios</a></li>
+                <?php if(tieneRol([ROL_ADMIN])): ?><li><a href="admin/usuarios/listar.php"><i class="fa-solid fa-user-shield"></i> Usuarios</a></li><?php endif; ?>
             </ul>
         </nav>
 

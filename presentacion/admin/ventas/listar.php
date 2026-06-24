@@ -1,6 +1,7 @@
 <?php
 require_once '../../../config/control_acceso.php';
 requerirLogin();
+requerirRol([ROL_ADMIN, ROL_SUPERVISOR]);
 
 require_once '../../../negocio/VentaNegocio.php';
 
@@ -41,12 +42,12 @@ function mostrarValor($valor)
             <ul class="list-unstyled components">
                 <li><a href="../../dashboard.php"><i class="fa-solid fa-house"></i> Panel Principal</a></li>
                 <li><a href="crear.php"><i class="fa-solid fa-cart-shopping"></i> Nueva Venta</a></li>
-                <li class="active"><a href="listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li>
-                <li><a href="../categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li>
-                <li><a href="../marcas/listar.php"><i class="fa-solid fa-award"></i> Marcas</a></li>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li class="active"><a href="listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li><?php endif; ?>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="../categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li><?php endif; ?>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="../marcas/listar.php"><i class="fa-solid fa-award"></i> Marcas</a></li><?php endif; ?>
                 <li><a href="../productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
                 <li><a href="../clientes/listar.php"><i class="fa-solid fa-users"></i> Clientes</a></li>
-                <li><a href="../usuarios/listar.php"><i class="fa-solid fa-user-shield"></i> Usuarios</a></li>
+                <?php if(tieneRol([ROL_ADMIN])): ?><li><a href="../usuarios/listar.php"><i class="fa-solid fa-user-shield"></i> Usuarios</a></li><?php endif; ?>
             </ul>
         </nav>
 
@@ -70,17 +71,18 @@ function mostrarValor($valor)
 
             <div class="container-fluid p-4">
                 <h2 class="mb-4 text-dark fw-bold"><i class="fa-solid fa-file-invoice-dollar text-secondary"></i> Historial de Ventas</h2>
-                <div class="row mb-4 align-items-center">
-                    <div class="col-md-6">
-                        <form action="" method="GET" class="d-flex">
-                            <input type="text" class="form-control me-2" name="buscar_venta" placeholder="Buscar por número de factura, cliente o vendedor..." value="<?php echo mostrarValor($buscar); ?>">
-                            <button type="submit" class="btn btn-outline-primary me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
-                            <button type="button" class="btn btn-outline-secondary btn-reset-search" title="Limpiar búsqueda"><i class="fa-solid fa-arrows-rotate"></i></button>
-                        </form>
-                    </div>
-                    
-<div class="col-md-6 text-md-end">
-                        <a href="crear.php" class="btn btn-success fw-bold"><i class="fa-solid fa-cart-plus"></i> Ir al Punto de Venta</a>
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+                    <form action="" method="GET" class="flex-grow-1" style="max-width: 600px;">
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text bg-white text-muted border-end-0"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            <input type="text" class="form-control border-start-0 ps-0" name="buscar_venta" placeholder="Buscar por número de factura, cliente o vendedor..." value="<?php echo mostrarValor($buscar); ?>">
+                            <button type="button" class="btn btn-outline-secondary btn-reset-search" title="Limpiar búsqueda"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </form>
+                    <div class="d-grid d-md-block">
+                        <a href="crear.php" class="btn btn-success fw-bold">
+                            <i class="fa-solid fa-cart-plus"></i> Ir al Punto de Venta
+                        </a>
                     </div>
                 </div>
 

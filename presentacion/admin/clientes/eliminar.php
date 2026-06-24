@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../config/control_acceso.php';
 requerirLogin();
+requerirRol([ROL_ADMIN, ROL_SUPERVISOR, ROL_VENDEDOR]);
 
 
 require_once __DIR__ . '/../../../negocio/ClienteNegocio.php';
@@ -66,12 +67,12 @@ if (isset($cliente['tipo_cliente'])) {
             <ul class="list-unstyled components">
                 <li><a href="../../dashboard.php"><i class="fa-solid fa-house"></i> Panel Principal</a></li>
                 <li><a href="../ventas/crear.php"><i class="fa-solid fa-cart-shopping"></i> Nueva Venta</a></li>
-                <li><a href="../ventas/listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li>
-                <li><a href="../categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li>
-                <li><a href="../marcas/listar.php"><i class="fa-solid fa-award"></i> Marcas</a></li>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="../ventas/listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li><?php endif; ?>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="../categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li><?php endif; ?>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="../marcas/listar.php"><i class="fa-solid fa-award"></i> Marcas</a></li><?php endif; ?>
                 <li><a href="../productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
                 <li class="active"><a href="listar.php"><i class="fa-solid fa-users"></i> Clientes</a></li>
-                <li><a href="../usuarios/listar.php"><i class="fa-solid fa-user-shield"></i> Usuarios</a></li>
+                <?php if(tieneRol([ROL_ADMIN])): ?><li><a href="../usuarios/listar.php"><i class="fa-solid fa-user-shield"></i> Usuarios</a></li><?php endif; ?>
             </ul>
         </nav>
 
