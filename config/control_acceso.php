@@ -1,7 +1,7 @@
 <?php
 // =============================================================
 // control_acceso.php — Autenticación y control de roles
-// Incluir al inicio de cada página protegida del sistema.
+// Incluir al inicio de cada página protegida del sistema
 // =============================================================
 
 // Roles (coinciden con id_rol en la tabla `roles`)
