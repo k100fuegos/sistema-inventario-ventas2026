@@ -1,11 +1,18 @@
 document.addEventListener("DOMContentLoaded", function() {
     // Lógica para contraer y expandir el menú lateral
     const toggleButton = document.getElementById("sidebarCollapse");
+    const closeButton = document.getElementById("sidebarClose");
     const sidebar = document.getElementById("sidebar");
 
     if(toggleButton && sidebar) {
         toggleButton.addEventListener("click", function() {
             sidebar.classList.toggle("active");
+        });
+    }
+
+    if(closeButton && sidebar) {
+        closeButton.addEventListener("click", function() {
+            sidebar.classList.remove("active");
         });
     }
 

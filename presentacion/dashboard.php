@@ -76,6 +76,9 @@ try {
     <div class="d-flex">
         
         <nav id="sidebar">
+        <button type="button" id="sidebarClose" class="btn btn-link text-white d-block d-md-none position-absolute top-0 end-0 mt-3 me-2" style="z-index: 1060; text-decoration: none;">
+            <i class="fa-solid fa-xmark fs-3"></i>
+        </button>
             <div class="sidebar-header d-flex align-items-center justify-content-center py-3">
                 <img src="../public/img/logo-nav.svg" alt="Logo" class="img-fluid me-2" style="max-width: 40px;">
                 <h4 class="fw-bold mb-0">Technobyte</h4>
@@ -94,13 +97,17 @@ try {
         </nav>
 
         <div id="content">
-            <nav class="navbar navbar-expand-lg navbar-light">
+            <nav class="navbar navbar-expand-lg navbar-light sticky-top bg-white shadow-sm" style="z-index: 1020;">
                 <div class="container-fluid">
                     <button type="button" id="sidebarCollapse" class="btn btn-dorado"><i class="fa-solid fa-bars"></i></button>
                     <div class="ms-auto d-flex align-items-center">
                         <span class="me-3 fw-bold">
                             <i class="fa-solid fa-circle-user"></i> 
-                            <?php echo isset($_SESSION['nombre']) ? $_SESSION['nombre'] : 'Administrador'; ?>
+                            <?php 
+                            $nombreUsr = $_SESSION['nombre'] ?? 'Administrador';
+                            $rolUsr = $_SESSION['nombre_rol'] ?? 'Sin rol';
+                            echo htmlspecialchars($nombreUsr) . ' (' . htmlspecialchars($rolUsr) . ')';
+                            ?>
                         </span>
                         <a href="../logout.php" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
                     </div>
@@ -235,7 +242,7 @@ try {
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../public/js/main.js"></script>
+    <script src="../public/js/main.js?v=<?php echo time(); ?>"></script>
 
     <script>
        

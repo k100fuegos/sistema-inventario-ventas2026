@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../../../config/control_acceso.php';
+requerirLogin();
+
 require_once __DIR__ . '/../../../negocio/VentaNegocio.php';
 require_once __DIR__ . '/../../../negocio/ClienteNegocio.php';
 require_once __DIR__ . '/../../../negocio/lib/fpdf/fpdf.php';
