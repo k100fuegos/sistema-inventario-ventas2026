@@ -1,3 +1,9 @@
+﻿<?php
+require_once __DIR__ . '/../config/control_acceso.php';
+requerirLogin();
+$nombreUsuario = htmlspecialchars($_SESSION['nombre'] ?? '', ENT_QUOTES, 'UTF-8');
+$nombreRol = htmlspecialchars($_SESSION['nombre_rol'] ?? '', ENT_QUOTES, 'UTF-8');
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -20,21 +26,29 @@
             <ul class="list-unstyled components">
                 <li class="active"><a href="dashboard.php"><i class="fa-solid fa-house"></i> Panel Principal</a></li>
                 <li><a href="admin/ventas/crear.php"><i class="fa-solid fa-cart-shopping"></i> Nueva Venta</a></li>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?>
                 <li><a href="admin/ventas/listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li>
+                <?php endif; ?>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?>
                 <li><a href="admin/categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li>
+                <?php endif; ?>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?>
                 <li><a href="admin/marcas/listar.php"><i class="fa-solid fa-tags"></i> Marcas</a></li>
+                <?php endif; ?>
                 <li><a href="admin/productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
                 <li><a href="admin/clientes/listar.php"><i class="fa-solid fa-users"></i> Clientes</a></li>
+                <?php if(tieneRol([ROL_ADMIN])): ?>
                 <li><a href="admin/usuarios/listar.php"><i class="fa-solid fa-user-shield"></i> Usuarios</a></li>
+                <?php endif; ?>
             </ul>
         </nav>
 
         <div id="content">
-            <nav class="navbar navbar-expand-lg navbar-light">
+                        <nav class="navbar navbar-expand-lg navbar-light">
                 <div class="container-fluid">
                     <button type="button" id="sidebarCollapse" class="btn btn-dorado"><i class="fa-solid fa-bars"></i></button>
                     <div class="ms-auto d-flex align-items-center">
-                        <span class="me-3 fw-bold"><i class="fa-solid fa-circle-user"></i> </span>
+                        <span class="me-3 fw-bold"><i class="fa-solid fa-circle-user"></i> <?= htmlspecialchars($_SESSION['nombre'] ?? 'Usuario', ENT_QUOTES, 'UTF-8') ?> (<?= htmlspecialchars($_SESSION['nombre_rol'] ?? 'Rol', ENT_QUOTES, 'UTF-8') ?>)</span>
                         <a href="../logout.php" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
                     </div>
                 </div>
