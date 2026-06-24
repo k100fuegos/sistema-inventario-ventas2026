@@ -35,6 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $imagenActual = $producto['imagen_producto'] ?? 'sin-imagen.png';
     $imagen = procesarImagen($_FILES['imagen_producto'] ?? null, $errores, $imagenActual);
 
+    if (isset($_POST['eliminar_imagen_actual']) && $_POST['eliminar_imagen_actual'] == '1' && $imagen === $imagenActual) {
+        $imagen = ''; 
+    }
+
     $datos = [
         'id_producto'          => $idProducto,
         'codigo_producto'      => $_POST['codigo_producto'] ?? '',
@@ -212,12 +216,18 @@ function procesarImagen($archivo, &$errores, $imagenActual)
                                             $rutaImagen = "../../../public/img/sin-imagen.png";
                                         }
                                     ?>
-                                    <img src="<?php echo mostrarValor($rutaImagen); ?>" alt="Imagen Actual" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                                    <img src="<?php echo mostrarValor($rutaImagen); ?>" alt="Imagen Actual" id="preview_img" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
                                 </div>
                                 <div class="col-md-10">
                                     <label class="form-label fw-bold">Actualizar Imagen (Opcional)</label>
-                                    <input type="file" class="form-control" name="imagen_producto" accept=".jpg,.jpeg,.png,.webp">
-                                    <div class="form-text">Si no selecciona ningún archivo, se mantendrá la imagen actual. Límite de 2MB.</div>
+                                    <div class="input-group">
+                                        <input type="file" class="form-control" name="imagen_producto" id="imagen_producto" accept=".jpg,.jpeg,.png,.webp" onchange="document.getElementById('eliminar_imagen_actual').value = '0';">
+                                        <button class="btn btn-outline-danger" type="button" onclick="document.getElementById('imagen_producto').value = ''; document.getElementById('eliminar_imagen_actual').value = '1'; document.getElementById('preview_img').src = '../../../public/img/sin-imagen.png';"><i class="fa-solid fa-trash-can"></i> Eliminar Imagen</button>
+                                    </div>
+                                    <input type="hidden" name="eliminar_imagen_actual" id="eliminar_imagen_actual" value="0">
+                                    <div class="form-text text-secondary">
+                                        <i class="fa-solid fa-circle-info"></i> Nota: Solo se permite asociar 1 imagen por producto. Si no selecciona ningún archivo, se mantendrá la imagen actual. Límite de 2MB.
+                                    </div>
                                 </div>
                             </div>
 

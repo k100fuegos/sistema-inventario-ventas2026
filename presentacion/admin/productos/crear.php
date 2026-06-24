@@ -148,8 +148,13 @@ function mostrarValor($valor) {
                             <div class="row">
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label fw-bold">Imagen del Producto (Opcional):</label>
-                                    <input type="file" class="form-control" name="imagen_producto" accept=".jpg,.jpeg,.png,.webp">
-                                    <div class="form-text">Formatos permitidos: JPG, JPEG, PNG o WEBP. Tamaño máximo: 2 MB.</div>
+                                    <div class="input-group">
+                                        <input type="file" class="form-control" name="imagen_producto" id="imagen_producto" accept=".jpg,.jpeg,.png,.webp">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('imagen_producto').value = ''"><i class="fa-solid fa-eraser"></i> Limpiar</button>
+                                    </div>
+                                    <div class="form-text text-secondary">
+                                        <i class="fa-solid fa-circle-info"></i> Nota: Solo se permite asociar 1 imagen por producto. Formatos permitidos: JPG, JPEG, PNG o WEBP. Tamaño máximo: 2 MB.
+                                    </div>
                                 </div>
                             </div>
 
