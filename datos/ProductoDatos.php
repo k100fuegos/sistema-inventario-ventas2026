@@ -184,7 +184,8 @@ class ProductoDatos
         $conexion = new Conexion();
         $conexion->query = "SELECT
                             productos.id_producto, productos.codigo_producto, productos.nombre_producto, 
-                            productos.precio_producto, productos.stock_producto, marcas.nombre_marca, categorias.nombre_categoria
+                            productos.precio_producto, productos.stock_producto, marcas.nombre_marca, categorias.nombre_categoria,
+                            productos.imagen_producto, productos.modelo_producto
                             FROM productos
                             INNER JOIN categorias ON productos.id_categoria = categorias.id_categoria
                             INNER JOIN marcas ON productos.id_marca = marcas.id_marca

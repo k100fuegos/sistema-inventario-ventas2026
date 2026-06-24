@@ -50,7 +50,7 @@ function mostrarValor($valor)
             <ul class="list-unstyled components">
                 <li><a href="../../dashboard.php"><i class="fa-solid fa-house"></i> Panel Principal</a></li>
                 <li><a href="crear.php"><i class="fa-solid fa-cart-shopping"></i> Nueva Venta</a></li>
-                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li class="active"><a href="listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li><?php endif; ?>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR, ROL_VENDEDOR])): ?><li class="active"><a href="listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li><?php endif; ?>
                 <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="../categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li><?php endif; ?>
                 <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="../marcas/listar.php"><i class="fa-solid fa-award"></i> Marcas</a></li><?php endif; ?>
                 <li><a href="../productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
@@ -78,11 +78,15 @@ function mostrarValor($valor)
             </nav>
 
             <div class="container-fluid p-4">
-                 <div class="d-flex justify-content-between align-items-center mb-4">
-                     <h2 class="text-dark fw-bold"><i class="fa-solid fa-file-invoice" style="color: var(--color-secundario);"></i> Detalles de Venta</h2>
-                     <div>
-                         <a href="descargar_pdf.php?id=<?php echo (int)$id_venta; ?>" target="_blank" class="btn btn-danger fw-bold me-2"><i class="fa-solid fa-file-pdf"></i> Descargar Factura (PDF)</a>
-                         <a href="listar.php" class="btn btn-secondary fw-bold"><i class="fa-solid fa-arrow-left"></i> Volver al Historial</a>
+                 <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+                     <h2 class="text-dark fw-bold mb-0"><i class="fa-solid fa-file-invoice" style="color: var(--color-secundario);"></i> Detalles de Venta</h2>
+                     <div class="row gx-2 m-0 w-100 justify-content-lg-end" style="max-width: 500px;">
+                         <div class="col-6">
+                             <a href="descargar_pdf.php?id=<?php echo (int)$id_venta; ?>" target="_blank" class="btn btn-outline-danger fw-bold w-100 h-100 d-flex justify-content-center align-items-center text-wrap"><i class="fa-solid fa-file-pdf me-2"></i> Descargar PDF</a>
+                         </div>
+                         <div class="col-6">
+                             <a href="listar.php" class="btn btn-secondary fw-bold w-100 h-100 d-flex justify-content-center align-items-center text-wrap"><i class="fa-solid fa-arrow-left me-2"></i> Volver al Historial</a>
+                         </div>
                      </div>
                  </div>
 
@@ -131,6 +135,7 @@ function mostrarValor($valor)
                             <thead class="table-light">
                                 <tr>
                                     <th>Código</th>
+                                    <th>Imagen</th>
                                     <th>Producto</th>
                                     <th>Precio Unitario</th>
                                     <th>Cantidad</th>
@@ -142,6 +147,13 @@ function mostrarValor($valor)
                                     <?php foreach ($detalles as $detalle): ?>
                                         <tr>
                                             <td class="text-muted fw-bold"><?php echo mostrarValor($detalle['codigo_producto']); ?></td>
+                                            <td>
+                                                <?php if (!empty($detalle['imagen_producto']) && file_exists('../../../public/img/productos/' . $detalle['imagen_producto'])): ?>
+                                                    <img src="../../../public/img/productos/<?php echo mostrarValor($detalle['imagen_producto']); ?>" alt="Producto" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
+                                                <?php else: ?>
+                                                    <img src="../../../public/img/sin-imagen.png" alt="Sin imagen" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
+                                                <?php endif; ?>
+                                            </td>
                                             <td><?php echo mostrarValor($detalle['nombre_producto']); ?></td>
                                             <td>$ <?php echo number_format((float) $detalle['precio_unitario'], 2); ?></td>
                                             <td><?php echo mostrarValor($detalle['cantidad_producto']); ?></td>
@@ -150,21 +162,21 @@ function mostrarValor($valor)
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="5" class="text-center py-4">No se encontraron productos en esta venta.</td>
+                                        <td colspan="6" class="text-center py-4">No se encontraron productos en esta venta.</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
                             <tfoot class="table-light">
                                 <tr>
-                                    <td colspan="4" class="text-end fw-bold">Subtotal Venta:</td>
+                                    <td colspan="5" class="text-end fw-bold">Subtotal Venta:</td>
                                     <td class="fw-bold">$ <?php echo number_format((float) $venta['subtotal_venta'], 2); ?></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="4" class="text-end fw-bold">IVA:</td>
+                                    <td colspan="5" class="text-end fw-bold">IVA:</td>
                                     <td class="fw-bold text-danger">+ $ <?php echo number_format((float) $venta['iva_venta'], 2); ?></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="4" class="text-end fw-bold fs-5">Total a Pagar:</td>
+                                    <td colspan="5" class="text-end fw-bold fs-5">Total a Pagar:</td>
                                     <td class="fw-bold fs-5 text-success">$ <?php echo number_format((float) $venta['total_venta'], 2); ?></td>
                                 </tr>
                             </tfoot>

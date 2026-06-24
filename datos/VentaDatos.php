@@ -128,6 +128,7 @@ class VentaDatos
                                 dv.id_producto, 
                                 p.nombre_producto,
                                 p.codigo_producto,
+                                p.imagen_producto,
                                 dv.cantidad_producto, 
                                 dv.precio_unitario, 
                                 dv.subtotal_detalle

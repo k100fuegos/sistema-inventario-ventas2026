@@ -61,10 +61,6 @@ class ClienteNegocio
             $errores[] = "El formato del NRC contiene caracteres no permitidos.";
         }
 
-        if (!empty($datos['telefono_cliente']) && !preg_match('/^\d{4}-\d{4}$/', $datos['telefono_cliente'])) {
-            $errores[] = "El teléfono debe tener el formato 0000-0000.";
-        }
-
         if (!empty($datos['correo_cliente']) && !filter_var($datos['correo_cliente'], FILTER_VALIDATE_EMAIL)) {
             $errores[] = "El correo electrónico proporcionado no es válido.";
         }

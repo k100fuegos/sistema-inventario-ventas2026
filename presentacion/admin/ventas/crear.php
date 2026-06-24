@@ -14,7 +14,6 @@ $usuarioNegocio = new UsuarioNegocio();
 $productoNegocio = new ProductoNegocio();
 
 $clientes = $clienteNegocio->listarClientes();
-$usuarios = $usuarioNegocio->listarUsuarios();
 $productos = $productoNegocio->listarProductosActivos();
 
 $mensajeError = '';
@@ -68,7 +67,7 @@ function mostrarValor($valor) {
             overflow-y: auto;
         }
         .select-list {
-            height: 120px !important;
+            height: 180px !important;
             overflow-y: auto;
         }
     </style>
@@ -86,7 +85,7 @@ function mostrarValor($valor) {
             <ul class="list-unstyled components">
                 <li><a href="../../dashboard.php"><i class="fa-solid fa-house"></i> Panel Principal</a></li>
                 <li class="active"><a href="crear.php"><i class="fa-solid fa-cart-shopping"></i> Nueva Venta</a></li>
-                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li><?php endif; ?>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR, ROL_VENDEDOR])): ?><li><a href="listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li><?php endif; ?>
                 <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="../categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li><?php endif; ?>
                 <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="../marcas/listar.php"><i class="fa-solid fa-award"></i> Marcas</a></li><?php endif; ?>
                 <li><a href="../productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
@@ -132,7 +131,7 @@ function mostrarValor($valor) {
                              <i class="fa-solid fa-user-tag"></i> Datos de Facturación
                          </div>
                          <div class="card-body p-4"> <div class="row mb-3">
-                                 <div class="col-md-6 mb-2">
+                                 <div class="col-md-4 mb-2">
                                      <label class="form-label fw-bold mb-1">Fecha de Venta</label>
                                      <div class="form-control-plaintext text-muted fw-bold border rounded px-3 bg-light">
                                          <i class="fa-regular fa-calendar"></i> <?php echo date('d/m/Y h:i A'); ?>
@@ -140,19 +139,29 @@ function mostrarValor($valor) {
                                      <input type="hidden" name="fecha_venta" value="<?php echo date('Y-m-d\TH:i'); ?>">
                                  </div>
                                  
-                                 <div class="col-md-6 mb-2">
+                                 <div class="col-md-4 mb-2">
                                      <label for="estado_venta" class="form-label fw-bold mb-1">Estado de la Venta</label>
                                      <select class="form-select" id="estado_venta" name="estado_venta" required>
                                          <option value="Realizada" selected>Realizada</option>
                                          <option value="Pendiente">Pendiente</option>
                                      </select>
                                  </div>
+
+                                 <div class="col-md-4 mb-2">
+                                     <label class="form-label fw-bold mb-1">Vendedor <span class="text-danger">*</span></label>
+                                     <div class="form-control-plaintext text-muted fw-bold border rounded px-3 bg-light d-flex align-items-center" style="height: 38px;">
+                                         <i class="fa-solid fa-user-tie me-2" style="color: var(--color-secundario);"></i> <?php echo htmlspecialchars($_SESSION['nombre'] ?? 'Usuario', ENT_QUOTES, 'UTF-8'); ?>
+                                     </div>
+                                     <input type="hidden" id="id_usuario" name="id_usuario" value="<?php echo htmlspecialchars($_SESSION['id_usuario'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                 </div>
                              </div>
 
-                             <hr class="text-muted mb-4 opacity-25"> <div class="row">
-                                 <div class="col-md-6 mb-2">
+                             <hr class="text-muted mb-4 opacity-25"> 
+                             
+                             <div class="row">
+                                 <div class="col-md-5 mb-3">
                                      <label class="form-label fw-bold d-flex justify-content-between align-items-center mb-1">
-                                         <span>Cliente <span class="text-danger">*</span></span>
+                                         <span>Seleccionar Cliente <span class="text-danger">*</span></span>
                                          <a href="../clientes/crear.php" class="btn btn-sm btn-outline-primary py-0 px-2" tabindex="-1">
                                              <i class="fa-solid fa-plus"></i> Nuevo
                                          </a>
@@ -161,34 +170,42 @@ function mostrarValor($valor) {
                                          <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass" style="color: var(--color-secundario);"></i></span>
                                          <input type="text" id="buscar_cliente" class="form-control" placeholder="Escribe el nombre, DUI, NIT o NRC..." onkeyup="filtrarClientes()">
                                      </div>
-                                     <select class="form-select select-list bg-light shadow-sm" id="id_cliente" name="id_cliente" size="4" required>
-                                         </select>
+                                     <select class="form-select select-list bg-light shadow-sm" id="id_cliente" name="id_cliente" size="6" onchange="mostrarDetallesCliente()" required>
+                                         <!-- Opciones JS -->
+                                     </select>
                                  </div>
 
-                                 <div class="col-md-6 mb-2">
-                                     <label class="form-label fw-bold mb-1">Vendedor <span class="text-danger">*</span></label>
-                                     <div class="input-group mb-2">
-                                         <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass" style="color: var(--color-secundario);"></i></span>
-                                         <input type="text" id="buscar_vendedor" class="form-control" placeholder="Escribe el nombre del vendedor..." onkeyup="filtrarVendedores()">
+                                 <div class="col-md-7 mb-3">
+                                     <div class="card bg-light border-0 shadow-sm h-100">
+                                         <div class="card-header bg-white fw-bold py-2 text-primary border-bottom-0">
+                                             <i class="fa-solid fa-id-card text-secondary"></i> Detalles del Cliente
+                                         </div>
+                                         <div class="card-body py-2" id="detalles_cliente">
+                                             <div class="text-center text-muted mt-4">
+                                                 <i class="fa-solid fa-user-circle fa-3x mb-2 opacity-50"></i>
+                                                 <p>Seleccione un cliente para ver sus datos.</p>
+                                             </div>
+                                         </div>
                                      </div>
-                                     <select class="form-select select-list bg-light shadow-sm" id="id_usuario" name="id_usuario" size="4" required>
-                                         </select>
                                  </div>
                              </div>
 
                          </div>
                      </div>
 
-                     <div class="row gx-4"> <div class="col-md-4 mb-4">
-                             <div class="card shadow-sm border-0 h-100"> <div class="card-header text-white fw-bold" style="background-color: var(--color-secundario);">
+                     <div class="row gx-4 mb-4"> 
+                         <div class="col-md-5">
+                             <div class="card shadow-sm border-0 h-100">
+                                 <div class="card-header text-white fw-bold" style="background-color: var(--color-secundario);">
                                      <i class="fa-solid fa-magnifying-glass"></i> Agregar Producto
                                  </div>
                                  <div class="card-body p-4">
                                      <div class="mb-3">
                                          <label class="form-label fw-bold">Buscar Producto</label>
                                          <input type="text" id="buscar_producto" class="form-control mb-3 shadow-sm" placeholder="Escribe nombre o código..." onkeyup="filtrarProductos()">
-                                         <select class="form-select select-list bg-light shadow-sm" id="selector_producto" size="8">
-                                             </select>
+                                         <select class="form-select select-list bg-light shadow-sm" id="selector_producto" size="6" onchange="mostrarDetallesProducto()">
+                                             <!-- Opciones generadas por JS -->
+                                         </select>
                                      </div>
                                      <div class="d-grid mt-4">
                                          <button type="button" class="btn fw-bold text-white shadow" style="background-color: var(--color-primario); padding: 12px;" onclick="agregarAlCarrito()">
@@ -198,8 +215,23 @@ function mostrarValor($valor) {
                                  </div>
                              </div>
                          </div>
+                         <div class="col-md-7">
+                             <div class="card bg-light border-0 shadow-sm h-100">
+                                 <div class="card-header bg-white fw-bold py-2 text-primary border-bottom-0">
+                                     <i class="fa-solid fa-cubes text-secondary"></i> Detalles del Producto
+                                 </div>
+                                 <div class="card-body py-2 d-flex align-items-center justify-content-center" id="detalles_producto">
+                                     <div class="text-center text-muted w-100 mt-4">
+                                         <i class="fa-solid fa-box-open fa-3x mb-2 opacity-50"></i>
+                                         <p>Seleccione un producto para ver sus detalles.</p>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
 
-                         <div class="col-md-8 mb-4">
+                     <div class="row gx-4">
+                         <div class="col-md-12 mb-4">
                              <div class="card shadow-sm border-0 h-100">
                                  <div class="card-header text-white fw-bold" style="background-color: var(--color-primario);">
                                      <i class="fa-solid fa-cart-shopping"></i> Detalles del Carrito
@@ -259,7 +291,6 @@ function mostrarValor($valor) {
 
     <script>
         let bdClientes = <?php echo json_encode($clientes); ?>;
-        const bdUsuarios = <?php echo json_encode($usuarios); ?>;
         const bdProductos = <?php echo json_encode($productos); ?>;
         let carrito = [];
 
@@ -298,55 +329,156 @@ function mostrarValor($valor) {
         // Filtro de Clientes
         function filtrarClientes() {
             const termino = textoLimpiado(document.getElementById('buscar_cliente').value);
+            
             if (termino === '') {
-                renderizarLista('id_cliente', [], 'id_cliente', null, null, 'Escriba para buscar clientes...');
+                renderizarLista('id_cliente', [], 'id_cliente', null, null, 'Escriba para buscar un cliente...');
                 return;
             }
+
             const filtrados = bdClientes.filter(c => {
+                if (Number(c.estado_cliente) !== 1) return false; // Solo clientes activos
+
                 const nombre = textoLimpiado(c.nombre_cliente);
                 const dui = textoLimpiado(c.dui_cliente);
                 const nit = textoLimpiado(c.nit_cliente);
                 const nrc = textoLimpiado(c.nrc_cliente);
                 return nombre.includes(termino) || dui.includes(termino) || nit.includes(termino) || nrc.includes(termino);
             });
-            renderizarLista('id_cliente', filtrados, 'id_cliente', c => {
-                const docs = [c.dui_cliente, c.nit_cliente, c.nrc_cliente].filter(Boolean).join(' / ');
-                return `${c.nombre_cliente} ${docs ? ' - [' + docs + ']' : ''}`;
-            });
+
+            if (filtrados.length === 0) {
+                renderizarLista('id_cliente', [], 'id_cliente', null, null, 'No se encontraron clientes activos...');
+            } else {
+                renderizarLista('id_cliente', filtrados, 'id_cliente', c => c.nombre_cliente);
+            }
         }
 
-        // Filtro de Vendedores
-        function filtrarVendedores() {
-            const termino = textoLimpiado(document.getElementById('buscar_vendedor').value);
-            if (termino === '') {
-                renderizarLista('id_usuario', [], 'id_usuario', null, null, 'Escriba para buscar vendedores...');
+        function mostrarDetallesCliente() {
+            const idCliente = document.getElementById('id_cliente').value;
+            const contenedor = document.getElementById('detalles_cliente');
+
+            if (!idCliente) {
+                contenedor.innerHTML = `
+                    <div class="text-center text-muted mt-4">
+                        <i class="fa-solid fa-user-circle fa-3x mb-2 opacity-50"></i>
+                        <p>Seleccione un cliente para ver sus datos.</p>
+                    </div>`;
                 return;
             }
-            const filtrados = bdUsuarios.filter(u => textoLimpiado(u.nombre_usuario).includes(termino));
-            renderizarLista('id_usuario', filtrados, 'id_usuario', u => u.nombre_usuario);
+
+            const cliente = bdClientes.find(c => c.id_cliente == idCliente);
+            if (!cliente) return;
+
+            let tipoText = cliente.tipo_cliente === 'PN' ? 'Persona Natural' : 'Persona Jurídica';
+            let docHtml = '';
+            
+            if (cliente.tipo_cliente === 'PN') {
+                docHtml = `<strong>DUI:</strong> <span class="text-muted">${cliente.dui_cliente || '-'}</span>`;
+            } else {
+                docHtml = `<strong>NIT:</strong> <span class="text-muted">${cliente.nit_cliente || '-'}</span><br><strong>NRC:</strong> <span class="text-muted">${cliente.nrc_cliente || '-'}</span>`;
+            }
+
+            contenedor.innerHTML = `
+                <div class="row fs-6">
+                    <div class="col-sm-7 border-end mb-2">
+                        <strong>Nombre:</strong><br><span class="text-muted">${cliente.nombre_cliente}</span>
+                    </div>
+                    <div class="col-sm-5 mb-2">
+                        <strong>Tipo:</strong><br><span class="badge bg-secondary">${tipoText}</span>
+                    </div>
+                    <div class="col-sm-7 border-end mb-2">
+                        ${docHtml}
+                    </div>
+                    <div class="col-sm-5 mb-2">
+                        <strong>Teléfono:</strong><br><span class="text-muted">${cliente.telefono_cliente || '-'}</span>
+                    </div>
+                    <div class="col-sm-12 mb-2">
+                        <strong>Correo:</strong><br><span class="text-muted">${cliente.correo_cliente || '-'}</span>
+                    </div>
+                    <div class="col-sm-12">
+                        <strong>Dirección:</strong><br><span class="text-muted">${cliente.direccion_cliente || '-'}</span>
+                    </div>
+                </div>
+            `;
         }
+
 
         // Filtro de Productos
         function filtrarProductos() {
             const termino = textoLimpiado(document.getElementById('buscar_producto').value);
+            
             if (termino === '') {
-                renderizarLista('selector_producto', [], 'id_producto', null, null, 'Escriba para buscar productos...');
+                renderizarLista('selector_producto', [], 'id_producto', null, null, 'Escriba para buscar un producto...');
                 return;
             }
+
             const filtrados = bdProductos.filter(p => {
                 const nombre = textoLimpiado(p.nombre_producto);
                 const codigo = textoLimpiado(p.codigo_producto);
                 return nombre.includes(termino) || codigo.includes(termino);
             });
-            renderizarLista('selector_producto', filtrados, 'id_producto', p => {
-                return `[${p.codigo_producto}] ${p.nombre_producto} - $${parseFloat(p.precio_producto).toFixed(2)}`;
-            });
+            
+            if (filtrados.length === 0) {
+                renderizarLista('selector_producto', [], 'id_producto', null, null, 'No se encontraron productos...');
+            } else {
+                renderizarLista('selector_producto', filtrados, 'id_producto', p => p.nombre_producto);
+            }
+        }
+
+        function mostrarDetallesProducto() {
+            const idProducto = document.getElementById('selector_producto').value;
+            const contenedor = document.getElementById('detalles_producto');
+
+            if (!idProducto) {
+                contenedor.innerHTML = `
+                    <div class="text-center text-muted mt-4 w-100">
+                        <i class="fa-solid fa-box-open fa-3x mb-2 opacity-50"></i>
+                        <p>Seleccione un producto para ver sus detalles.</p>
+                    </div>`;
+                return;
+            }
+
+            const p = bdProductos.find(prod => prod.id_producto == idProducto);
+            if (!p) return;
+
+            const imagen = p.imagen_producto ? p.imagen_producto : 'sin-imagen.png';
+
+            contenedor.innerHTML = `
+                <div class="row fs-6 w-100 mt-2">
+                    <div class="col-md-4 text-center mb-3">
+                        <img src="../../../public/img/productos/${imagen}" alt="Imagen del Producto" class="img-fluid rounded shadow-sm border" style="max-height: 140px; object-fit: contain; width: 100%; background: #fff; padding: 5px;">
+                    </div>
+                    <div class="col-md-8 mb-3">
+                        <div class="row">
+                            <div class="col-sm-6 mb-2 border-end">
+                                <strong>Código:</strong><br><span class="text-muted">${p.codigo_producto}</span>
+                            </div>
+                            <div class="col-sm-6 mb-2">
+                                <strong>Categoría:</strong><br><span class="badge bg-secondary">${p.nombre_categoria || '-'}</span>
+                            </div>
+                            <div class="col-sm-12 mb-2">
+                                <strong>Nombre:</strong><br><span class="text-muted fw-bold">${p.nombre_producto}</span>
+                            </div>
+                            <div class="col-sm-6 mb-2 border-end">
+                                <strong>Modelo:</strong><br><span class="text-muted">${p.modelo_producto || '-'}</span>
+                            </div>
+                            <div class="col-sm-6 mb-2">
+                                <strong>Marca:</strong><br><span class="text-muted">${p.nombre_marca || '-'}</span>
+                            </div>
+                            <div class="col-sm-6 mt-2 border-end">
+                                <strong>Stock Disp:</strong><br><span class="text-primary fw-bold">${p.stock_producto}</span>
+                            </div>
+                            <div class="col-sm-6 mt-2">
+                                <strong>Precio:</strong><br><span class="text-success fw-bold fs-5">$ ${parseFloat(p.precio_producto).toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         // Inicializar listas al cargar
         document.addEventListener("DOMContentLoaded", function() {
             filtrarClientes();
-            filtrarVendedores();
             filtrarProductos();
 
             // Limpiar al hacer click en los inputs de búsqueda
@@ -363,14 +495,6 @@ function mostrarValor($valor) {
                 inputBuscarCliente.addEventListener('click', function() {
                     this.value = '';
                     filtrarClientes();
-                });
-            }
-
-            const inputBuscarVendedor = document.getElementById('buscar_vendedor');
-            if (inputBuscarVendedor) {
-                inputBuscarVendedor.addEventListener('click', function() {
-                    this.value = '';
-                    filtrarVendedores();
                 });
             }
         });
@@ -493,7 +617,7 @@ function mostrarValor($valor) {
                 return false;
             }
             if (!vendedor) {
-                alert("Por favor, seleccione un vendedor de la lista.");
+                alert("Error: No se pudo identificar al vendedor de la sesión actual.");
                 return false;
             }
 

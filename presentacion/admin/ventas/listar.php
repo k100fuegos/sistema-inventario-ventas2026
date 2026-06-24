@@ -1,7 +1,7 @@
 <?php
 require_once '../../../config/control_acceso.php';
 requerirLogin();
-requerirRol([ROL_ADMIN, ROL_SUPERVISOR]);
+requerirRol([ROL_ADMIN, ROL_SUPERVISOR, ROL_VENDEDOR]);
 
 require_once '../../../negocio/VentaNegocio.php';
 
@@ -42,7 +42,7 @@ function mostrarValor($valor)
             <ul class="list-unstyled components">
                 <li><a href="../../dashboard.php"><i class="fa-solid fa-house"></i> Panel Principal</a></li>
                 <li><a href="crear.php"><i class="fa-solid fa-cart-shopping"></i> Nueva Venta</a></li>
-                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li class="active"><a href="listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li><?php endif; ?>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR, ROL_VENDEDOR])): ?><li class="active"><a href="listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li><?php endif; ?>
                 <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="../categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li><?php endif; ?>
                 <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="../marcas/listar.php"><i class="fa-solid fa-award"></i> Marcas</a></li><?php endif; ?>
                 <li><a href="../productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
@@ -124,11 +124,11 @@ function mostrarValor($valor)
                                             </td>
                                             <td class="text-center">
                                                 <a href="ver_detalle.php?id=<?php echo $venta['id_venta']; ?>" class="btn btn-sm btn-outline-info" title="Ver Detalle"><i class="fa-solid fa-eye"></i></a>
-                                                <a href="descargar_pdf.php?id=<?php echo $venta['id_venta']; ?>" target="_blank" class="btn btn-sm btn-outline-danger" title="Descargar PDF"><i class="fa-solid fa-file-pdf"></i></a>
-                                                <?php if ($venta['estado_venta'] === 'Realizada' || $venta['estado_venta'] === 'Pendiente'): ?>
+                                                <!-- pdf-removed -->
+                                                <?php if ($venta['estado_venta'] === 'Realizada' || $venta['estado_venta'] === 'Pendiente'): ?><?php if (tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?>
                                                     <a href="editar.php?id=<?php echo $venta['id_venta']; ?>" class="btn btn-sm btn-outline-primary" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
                                                     <a href="anular.php?id=<?php echo $venta['id_venta']; ?>" class="btn btn-sm btn-outline-danger" title="Anular"><i class="fa-solid fa-ban"></i></a>
-                                                <?php endif; ?>
+                                                <?php endif; ?><?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

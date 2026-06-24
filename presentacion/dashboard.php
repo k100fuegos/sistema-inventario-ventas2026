@@ -2,62 +2,23 @@
 require_once '../config/control_acceso.php';
 requerirLogin();
 
+require_once '../negocio/DashboardNegocio.php';
+
 try {
-    
-    $pdo = new PDO("mysql:host=localhost;dbname=bd_inventario_ventas;charset=utf8mb4", "root", "");
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $dashboardNegocio = new DashboardNegocio();
+    $resumen = $dashboardNegocio->obtenerResumen();
 
-    // Tarjeta 1: Ventas del Día ($)
-    $stmt = $pdo->query("SELECT IFNULL(SUM(total_venta), 0) as total_dia FROM ventas WHERE DATE(fecha_venta) = CURDATE() AND estado_venta = 1");
-    $ventasDia = $stmt->fetch(PDO::FETCH_ASSOC)['total_dia'];
-
-    // Tarjeta 2: Transacciones del Día (Conteo)
-    $stmt = $pdo->query("SELECT COUNT(id_venta) as transacciones FROM ventas WHERE DATE(fecha_venta) = CURDATE() AND estado_venta = 1");
-    $transaccionesDia = $stmt->fetch(PDO::FETCH_ASSOC)['transacciones'];
-
-    // Tarjeta 3: Productos con Stock Bajo (Menor o igual a 5)
-    $stmt = $pdo->query("SELECT COUNT(id_producto) as stock_bajo FROM productos WHERE stock_producto <= 5 AND estado_producto = 1");
-    $stockBajo = $stmt->fetch(PDO::FETCH_ASSOC)['stock_bajo'];
-
-    // Tarjeta 4: Nuevos Clientes (Registrados este mes)
-    $stmt = $pdo->query("SELECT COUNT(id_cliente) as nuevos_clientes FROM clientes WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE()) AND estado_cliente = 1");
-    $nuevosClientes = $stmt->fetch(PDO::FETCH_ASSOC)['nuevos_clientes'];
-
-    // Tabla: Últimas 5 Ventas
-    $stmt = $pdo->query("
-        SELECT v.numero_factura, c.nombre_cliente, v.total_venta, v.estado_venta, v.fecha_venta 
-        FROM ventas v 
-        INNER JOIN clientes c ON v.id_cliente = c.id_cliente 
-        ORDER BY v.fecha_venta DESC LIMIT 5
-    ");
-    $ultimasVentas = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Gráfica: Top 5 Productos Más Vendidos
-    $stmt = $pdo->query("
-        SELECT p.nombre_producto, SUM(dv.cantidad_producto) as total_vendido 
-        FROM detalle_ventas dv 
-        INNER JOIN productos p ON dv.id_producto = p.id_producto 
-        INNER JOIN ventas v ON dv.id_venta = v.id_venta 
-        WHERE v.estado_venta = 1 
-        GROUP BY p.id_producto 
-        ORDER BY total_vendido DESC LIMIT 5
-    ");
-    $topProductos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Gráfica: Ventas por Categoría
-    $stmt = $pdo->query("
-        SELECT c.nombre_categoria, SUM(dv.cantidad_producto) as cantidad_por_categoria 
-        FROM detalle_ventas dv 
-        INNER JOIN productos p ON dv.id_producto = p.id_producto 
-        INNER JOIN categorias c ON p.id_categoria = c.id_categoria 
-        INNER JOIN ventas v ON dv.id_venta = v.id_venta 
-        WHERE v.estado_venta = 1 
-        GROUP BY c.id_categoria
-    ");
-    $ventasPorCategoria = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $ventasDia = $resumen['ventasDia'];
+    $transaccionesDia = $resumen['transaccionesDia'];
+    $stockBajo = $resumen['stockBajo'];
+    $listaStockBajo = $resumen['listaStockBajo'];
+    $nuevosClientes = $resumen['nuevosClientes'];
+    $ultimasVentas = $resumen['ultimasVentas'];
+    $topProductos = $resumen['topProductos'];
+    $ventasPorCategoria = $resumen['ventasPorCategoria'];
 
 } catch (Exception $e) {
-    die("Error de conexión o consulta: " . $e->getMessage());
+    die("Error al cargar el dashboard: " . $e->getMessage());
 }
 ?>
 <!DOCTYPE html>
@@ -87,7 +48,7 @@ try {
             <ul class="list-unstyled components">
                 <li class="active"><a href="dashboard.php"><i class="fa-solid fa-house"></i> Panel Principal</a></li>
                 <li><a href="admin/ventas/crear.php"><i class="fa-solid fa-cart-shopping"></i> Nueva Venta</a></li>
-                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="admin/ventas/listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li><?php endif; ?>
+                <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR, ROL_VENDEDOR])): ?><li><a href="admin/ventas/listar.php"><i class="fa-solid fa-file-invoice-dollar"></i> Historial Ventas</a></li><?php endif; ?>
                 <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="admin/categorias/listar.php"><i class="fa-solid fa-tags"></i> Categorías</a></li><?php endif; ?>
                 <?php if(tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?><li><a href="admin/marcas/listar.php"><i class="fa-solid fa-award"></i> Marcas</a></li><?php endif; ?>
                 <li><a href="admin/productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
@@ -134,7 +95,7 @@ try {
                         <div class="card card-resumen h-100 p-3">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="text-muted">Transacciones</h6>
+                                    <h6 class="text-muted">Ventas realizadas</h6>
                                     <h3 class="fw-bold text-primary"><?php echo $transaccionesDia; ?></h3>
                                 </div>
                                 <i class="fa-solid fa-file-invoice-dollar icon-resumen"></i>
@@ -192,8 +153,8 @@ try {
                 </div>
                 
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="card shadow-sm border-0">
+                    <div class="col-md-7 mb-3">
+                        <div class="card shadow-sm border-0 h-100">
                             <div class="card-header bg-white fw-bold py-3">
                                 <i class="fa-solid fa-clock-rotate-left"></i> Últimas Ventas
                             </div>
@@ -216,10 +177,12 @@ try {
                                                         <td><?php echo htmlspecialchars($venta['nombre_cliente']); ?></td>
                                                         <td class="fw-bold text-success">$ <?php echo number_format($venta['total_venta'], 2); ?></td>
                                                         <td>
-                                                            <?php if ($venta['estado_venta'] == 1): ?>
+                                                            <?php if ($venta['estado_venta'] === 'Realizada'): ?>
                                                                 <span class="badge bg-success">Realizada</span>
+                                                            <?php elseif ($venta['estado_venta'] === 'Pendiente'): ?>
+                                                                <span class="badge bg-warning text-dark">Pendiente</span>
                                                             <?php else: ?>
-                                                                <span class="badge bg-warning text-dark">Pendiente/Anulada</span>
+                                                                <span class="badge bg-danger">Anulada</span>
                                                             <?php endif; ?>
                                                         </td>
                                                     </tr>
@@ -227,6 +190,42 @@ try {
                                             <?php else: ?>
                                                 <tr>
                                                     <td colspan="4" class="text-center py-4 text-muted">Aún no hay ventas registradas en el sistema.</td>
+                                                </tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-5 mb-3">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="card-header bg-white fw-bold py-3">
+                                <i class="fa-solid fa-triangle-exclamation text-danger"></i> <span>Productos con Stock Bajo (5 o menos)</span> 
+                            </div>
+                            <div class="card-body p-0" style="max-height: 350px; overflow-y: auto;">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0 text-center align-middle">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Código</th>
+                                                <th>Producto</th>
+                                                <th>Stock</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php if (count($listaStockBajo) > 0): ?>
+                                                <?php foreach ($listaStockBajo as $prodBajo): ?>
+                                                    <tr>
+                                                        <td class="fw-bold text-muted"><?php echo htmlspecialchars($prodBajo['codigo_producto']); ?></td>
+                                                        <td><?php echo htmlspecialchars($prodBajo['nombre_producto']); ?></td>
+                                                        <td class="fw-bold text-danger"><?php echo $prodBajo['stock_producto']; ?></td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
+                                                <tr>
+                                                    <td colspan="3" class="text-center py-4 text-success"><i class="fa-solid fa-check-circle"></i> Todos los productos tienen buen stock.</td>
                                                 </tr>
                                             <?php endif; ?>
                                         </tbody>
