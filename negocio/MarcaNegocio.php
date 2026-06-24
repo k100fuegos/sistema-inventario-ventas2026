@@ -4,7 +4,6 @@ require_once dirname(__DIR__) . '/datos/MarcaDatos.php';
 
 class MarcaNegocio
 {
-
     private $marcaDatos;
 
     public function __construct()
@@ -15,14 +14,15 @@ class MarcaNegocio
     private function limpiarDatos($datos)
     {
         return [
-            'id_marca' => isset($datos['id_marca']) ? (int) $datos['id_marca'] : null,
+            'id_marca'     => isset($datos['id_marca']) ? (int) $datos['id_marca'] : null,
             'nombre_marca' => isset($datos['nombre_marca']) ? trim($datos['nombre_marca']) : '',
+            'estado_marca' => isset($datos['estado_marca']) ? (int) $datos['estado_marca'] : 1
         ];
     }
 
-    public function listarMarcas()
+    public function listarMarcas($buscar = '')
     {
-        return $this->marcaDatos->listarMarcas();
+        return $this->marcaDatos->listarMarcas($buscar);
     }
 
     private function validarMarca($datos)
@@ -35,6 +35,10 @@ class MarcaNegocio
 
         if (isset($datos['nombre_marca']) && strlen(trim($datos['nombre_marca'])) > 100) {
             $errores[] = "El nombre de la marca no debe superar los 100 caracteres";
+        }
+
+        if (isset($datos['estado_marca']) && !in_array((int)$datos['estado_marca'], [0, 1], true)) {
+            $errores[] = "El estado de la marca no es válido";
         }
 
         return $errores;
@@ -52,6 +56,32 @@ class MarcaNegocio
         }
 
         $marca = $this->limpiarDatos($datos);
+
+        // Buscar si ya existe una marca con ese nombre
+        $marcaExistente = $this->marcaDatos->obtenerMarcaPorNombre($marca['nombre_marca']);
+
+        if ($marcaExistente) {
+            // Existe pero está eliminada -> Reactivar
+            if ((int)$marcaExistente['eliminado_marca'] === 1) {
+                $marca['id_marca'] = $marcaExistente['id_marca'];
+                $resultado = $this->marcaDatos->reactivarMarca($marca);
+
+                return [
+                    'exito' => $resultado,
+                    'mensaje' => $resultado
+                        ? 'La marca ya existía y fue restaurada correctamente.'
+                        : 'La marca ya existe y no se pudo restaurar.'
+                ];
+            }
+
+            // Existe y está activa
+            return [
+                'exito' => false,
+                'errores' => ['Ya existe una marca con ese nombre.']
+            ];
+        }
+
+        // No existe, insertar normalmente
         $resultado = $this->marcaDatos->insertarMarca($marca);
 
         return [
@@ -75,6 +105,17 @@ class MarcaNegocio
 
         if (!isset($datos['id_marca']) || empty($datos['id_marca'])) {
             $errores[] = "El identificador de la marca es obligatorio";
+        }
+
+        // Verificar si existe otra marca con ese nombre
+        $marcaExistente = $this->marcaDatos->obtenerMarcaPorNombre(trim($datos['nombre_marca']));
+
+        if ($marcaExistente && $marcaExistente['id_marca'] != $datos['id_marca']) {
+            if ((int)$marcaExistente['eliminado_marca'] === 1) {
+                $errores[] = "Ya existe una marca eliminada con ese nombre. Si desea utilizarla nuevamente, restáurela creando un nuevo registro.";
+            } else {
+                $errores[] = "Ya existe una marca con ese nombre.";
+            }
         }
 
         if (!empty($errores)) {

@@ -2,8 +2,9 @@
 
 require_once __DIR__ . '/../../../negocio/CategoriaNegocio.php';
 
+$buscar = trim($_GET['buscar_categoria'] ?? '');
 $categoriaNegocio = new CategoriaNegocio();
-$categorias = $categoriaNegocio->listarCategorias();
+$categorias = $categoriaNegocio->listarCategorias($buscar);
 $mensaje = $_GET['mensaje'] ?? null;
 
 function mostrarValor($valor)
@@ -58,8 +59,9 @@ function mostrarValor($valor)
                 <div class="row mb-4 align-items-center">
                     <div class="col-md-6">
                         <form action="" method="GET" class="d-flex">
-                            <input type="text" class="form-control me-2" name="buscar_categoria" placeholder="Buscar categoría...">
-                            <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <input type="text" class="form-control me-2" name="buscar_categoria" placeholder="Buscar por nombre o estado (Activo/Inactivo)..." value="<?php echo mostrarValor($buscar); ?>">
+                            <button type="submit" class="btn btn-outline-primary me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <button type="button" class="btn btn-outline-secondary btn-reset-search" title="Limpiar búsqueda"><i class="fa-solid fa-arrows-rotate"></i></button>
                         </form>
                     </div>
 
@@ -77,6 +79,7 @@ function mostrarValor($valor)
                                 <tr>
                                     <th>Nombre de Categoría</th>
                                     <th>Descripción</th>
+                                    <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -87,6 +90,13 @@ function mostrarValor($valor)
                                             <td><?php echo mostrarValor($categoria['nombre_categoria']); ?></td>
                                             <td><?php echo mostrarValor($categoria['descripcion_categoria']); ?></td>
                                             <td>
+                                                <?php if ($categoria['estado_categoria'] == 1): ?>
+                                                    <span class="badge bg-success">Activo</span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-secondary">Inactivo</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
                                                 <a href="editar.php?id=<?php echo mostrarValor($categoria['id_categoria']); ?>" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
                                                 <a href="eliminar.php?id=<?php echo mostrarValor($categoria['id_categoria']); ?>" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
                                             </td>
@@ -94,7 +104,7 @@ function mostrarValor($valor)
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="3" class="text-center">No hay categorías registradas</td>
+                                        <td colspan="4" class="text-center">No se encontraron registros</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>

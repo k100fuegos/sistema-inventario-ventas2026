@@ -13,7 +13,8 @@ $datos = [
     'nrc_cliente'       => '',
     'telefono_cliente'  => '',
     'correo_cliente'    => '',
-    'direccion_cliente' => ''
+    'direccion_cliente' => '',
+    'estado_cliente'    => 1 // Por defecto activo
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -25,7 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'nrc_cliente'       => $_POST['nrc_cliente'] ?? '',
         'telefono_cliente'  => $_POST['telefono_cliente'] ?? '',
         'correo_cliente'    => $_POST['correo_cliente'] ?? '',
-        'direccion_cliente' => $_POST['direccion_cliente'] ?? ''
+        'direccion_cliente' => $_POST['direccion_cliente'] ?? '',
+        'estado_cliente'    => $_POST['estado_cliente'] ?? 1
     ];
 
     $resultado = $clienteNegocio->crearCliente($datos);
@@ -35,7 +37,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $errores = $resultado['errores'];
+    // Si hubo error de reactivación y se reactivó correctamente, también mandamos éxito
+    if (strpos($resultado['mensaje'] ?? '', 'restaurado correctamente') !== false) {
+        header('Location: listar.php?mensaje=creado');
+        exit;
+    }
+
+    $errores = isset($resultado['errores']) ? $resultado['errores'] : [$resultado['mensaje']];
 }
 
 function mostrarValor($valor)
@@ -104,19 +112,76 @@ function mostrarValor($valor)
 
                         <form action="" method="POST">
                             <div class="row">
-                                <div class="col-md-8 mb-3">
-                                    <label class="form-label fw-bold">Nombre del Cliente <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" name="nombre_cliente" required>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">
+                                        Nombre del Cliente <span class="text-danger">*</span>
+                                    </label>
+
+                                    <input type="text"
+                                        class="form-control"
+                                        name="nombre_cliente"
+                                        value="<?php echo mostrarValor($datos['nombre_cliente']); ?>"
+                                        required>
+
+                                    <small class="text-muted d-block mt-1 invisible">
+                                        <i class="fa-solid fa-circle-info me-1"></i>
+                                        Espacio reservado.
+                                    </small>
                                 </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Tipo <span class="text-danger">*</span></label>
-                                    <select class="form-select" name="tipo_cliente" id="tipo_cliente" required>
-                                        <option value="PN">PN - Persona Natural</option>
-                                        <option value="PJ">PJ - Persona Jurídica</option>
+
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label fw-bold">
+                                        Tipo <span class="text-danger">*</span>
+                                    </label>
+
+                                    <select class="form-select"
+                                        name="tipo_cliente"
+                                        id="tipo_cliente"
+                                        required>
+                                        <option value="PN" <?php echo ($datos['tipo_cliente'] === 'PN') ? 'selected' : ''; ?>>
+                                            PN - Persona Natural
+                                        </option>
+                                        <option value="PJ" <?php echo ($datos['tipo_cliente'] === 'PJ') ? 'selected' : ''; ?>>
+                                            PJ - Persona Jurídica
+                                        </option>
                                     </select>
+
+                                    <small class="text-muted d-block mt-1 invisible">
+                                        <i class="fa-solid fa-circle-info me-1"></i>
+                                        Espacio reservado.
+                                    </small>
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label fw-bold">
+                                        Estado <span class="text-danger">*</span>
+                                    </label>
+
+                                    <select class="form-select"
+                                        name="estado_cliente"
+                                        required>
+                                        <option value="1" <?php echo ($datos['estado_cliente'] == 1) ? 'selected' : ''; ?>>
+                                            Activo
+                                        </option>
+                                        <option value="0" <?php echo ($datos['estado_cliente'] == 0) ? 'selected' : ''; ?>>
+                                            Inactivo
+                                        </option>
+                                    </select>
+
+                                    <small class="text-muted d-block mt-1">
+                                        <i class="fa-solid fa-circle-info me-1"></i>
+                                        Los clientes inactivos no podrán realizar ventas.
+                                    </small>
+                                </div>
+                            </div>
+
+                            
+
+                            <div class="row mb-3">
+                                <div class="col-12">
                                     <div class="form-text text-secondary">
                                         <i class="fa-solid fa-circle-info me-1"></i>
-                                        Los documentos requeridos cambiarán según el tipo.
+                                        Los documentos requeridos cambiarán según el tipo de cliente.
                                     </div>
                                 </div>
                             </div>
@@ -124,32 +189,32 @@ function mostrarValor($valor)
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label fw-bold" id="dui_label">DUI</label>
-                                    <input type="text" class="form-control" id="dui_input" name="dui_cliente" placeholder="00000000-0">
+                                    <input type="text" class="form-control" id="dui_input" maxlength="10" name="dui_cliente" placeholder="00000000-0" value="<?php echo mostrarValor($datos['dui_cliente']); ?>">
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label fw-bold" id="nit_label">NIT</label>
-                                    <input type="text" class="form-control" id="nit_input" name="nit_cliente" placeholder="0000-000000-000-0">
+                                    <input type="text" class="form-control" id="nit_input" maxlength="17" name="nit_cliente" placeholder="0000-000000-000-0" value="<?php echo mostrarValor($datos['nit_cliente']); ?>">
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label fw-bold" id="nrc_label">NRC</label>
-                                    <input type="text" class="form-control" id="nrc_input" name="nrc_cliente">
+                                    <input type="text" class="form-control" id="nrc_input" maxlength="8" name="nrc_cliente" value="<?php echo mostrarValor($datos['nrc_cliente']); ?>">
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Teléfono</label>
-                                    <input type="text" class="form-control" name="telefono_cliente" placeholder="0000-0000">
+                                    <input type="text" class="form-control" name="telefono_cliente" placeholder="0000-0000" value="<?php echo mostrarValor($datos['telefono_cliente']); ?>">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Correo Electrónico</label>
-                                    <input type="email" class="form-control" name="correo_cliente" placeholder="ejemplo@email.com">
+                                    <input type="email" class="form-control" name="correo_cliente" placeholder="ejemplo@email.com" value="<?php echo mostrarValor($datos['correo_cliente']); ?>">
                                 </div>
                             </div>
 
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Dirección</label>
-                                <textarea class="form-control" name="direccion_cliente" rows="2" placeholder="Ej. Colonia El Sitio, San Miguel"></textarea>
+                                <textarea class="form-control" name="direccion_cliente" rows="2" placeholder="Ej. Colonia El Sitio, San Miguel"><?php echo mostrarValor($datos['direccion_cliente']); ?></textarea>
                             </div>
 
                             <hr class="mt-4 mb-4">
@@ -170,7 +235,6 @@ function mostrarValor($valor)
         document.addEventListener("DOMContentLoaded", function() {
 
             const tipo = document.getElementById("tipo_cliente");
-
             const dui = document.getElementById("dui_input");
             const nit = document.getElementById("nit_input");
             const nrc = document.getElementById("nrc_input");
@@ -184,43 +248,33 @@ function mostrarValor($valor)
                 if (tipo.value === "PN") {
 
                     // Persona Natural
-
                     dui.required = true;
                     nit.required = false;
                     nrc.required = false;
 
-                    lblDui.innerHTML =
-                        'DUI <span class="text-danger">*</span>';
-
-                    lblNit.innerHTML =
-                        'NIT <small class="text-secondary">(Opcional)</small>';
-
-                    lblNrc.innerHTML =
-                        'NRC <small class="text-secondary">(No aplica)</small>';
+                    lblDui.innerHTML = 'DUI <span class="text-danger">*</span>';
+                    lblNit.innerHTML = 'NIT <small class="text-secondary">(Opcional)</small>';
+                    lblNrc.innerHTML = 'NRC <small class="text-secondary">(No aplica)</small>';
 
                     dui.disabled = false;
-                    dui.placeholder = "00000000-0";
+                    if (!dui.value) dui.placeholder = "00000000-0";
                     nit.disabled = false;
                     nrc.disabled = true;
+                    nrc.value = "";
 
                 } else {
 
                     // Persona Jurídica
-
                     dui.required = false;
                     nit.required = true;
                     nrc.required = true;
 
-                    lblDui.innerHTML =
-                        'DUI <small class="text-secondary">(No aplica)</small>';
-
-                    lblNit.innerHTML =
-                        'NIT <span class="text-danger">*</span>';
-
-                    lblNrc.innerHTML =
-                        'NRC <span class="text-danger">*</span>';
+                    lblDui.innerHTML = 'DUI <small class="text-secondary">(No aplica)</small>';
+                    lblNit.innerHTML = 'NIT <span class="text-danger">*</span>';
+                    lblNrc.innerHTML = 'NRC <span class="text-danger">*</span>';
 
                     dui.disabled = true;
+                    dui.value = "";
                     dui.placeholder = "";
                     nit.disabled = false;
                     nrc.disabled = false;
@@ -228,7 +282,6 @@ function mostrarValor($valor)
             }
 
             actualizarFormulario();
-
             tipo.addEventListener("change", actualizarFormulario);
 
         });

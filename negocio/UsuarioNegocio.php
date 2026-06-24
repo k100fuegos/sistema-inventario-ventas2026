@@ -12,9 +12,9 @@ class UsuarioNegocio
         $this->usuarioDatos = new UsuarioDatos();
     }
 
-    public function listarUsuarios()
+    public function listarUsuarios($buscar = '')
     {
-        return $this->usuarioDatos->listarUsuarios();
+        return $this->usuarioDatos->listarUsuarios($buscar);
     }
 
     private function limpiarDatos($datos)

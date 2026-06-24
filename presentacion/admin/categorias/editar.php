@@ -21,7 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $datos = [
         'id_categoria'         => $id_categoria,
         'nombre_categoria'      => $_POST['nombre_categoria'] ?? '',
-        'descripcion_categoria' => $_POST['descripcion_categoria'] ?? ''
+        'descripcion_categoria' => $_POST['descripcion_categoria'] ?? '',
+        'estado_categoria'      => $_POST['estado_categoria'] ?? ''
     ];
 
     $resultado = $categoriaNegocio->actualizarCategoria($datos);
@@ -35,7 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $categoria = $datos;
 }
 
-function mostrarValor($valor) {
+function mostrarValor($valor)
+{
     return htmlspecialchars($valor ?? '', ENT_QUOTES, 'UTF-8');
 }
 
@@ -43,6 +45,7 @@ function mostrarValor($valor) {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Editar Categoría - Technobyte</title>
@@ -50,6 +53,7 @@ function mostrarValor($valor) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="../../../public/css/style.css?v=<?php echo time(); ?>">
 </head>
+
 <body>
     <div class="d-flex">
         <!-- SIDEBAR -->
@@ -83,19 +87,19 @@ function mostrarValor($valor) {
                     </div>
                     <div class="card-body p-4">
 
-                    <?php if (!empty($errores)): ?>
-                    <div class="alert alert-danger">
-                        <ul class="mb-0">
-                            <?php foreach ($errores as $error): ?>
-                                <li><?php echo mostrarValor($error); ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                <?php endif; ?>
-                        
-                        <form action="editar.php?id=<?php echo mostrarValor($categoria['id_categoria'])?>" method="POST">
+                        <?php if (!empty($errores)): ?>
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    <?php foreach ($errores as $error): ?>
+                                        <li><?php echo mostrarValor($error); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+
+                        <form action="editar.php?id=<?php echo mostrarValor($categoria['id_categoria']) ?>" method="POST">
                             <input type="hidden" name="id_categoria" value="Imprimir ID">
-                            
+
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Nombre de la Categoría</label>
                                 <input type="text" class="form-control" name="nombre_categoria" value="<?php echo mostrarValor($categoria['nombre_categoria']); ?>" required>
@@ -103,6 +107,25 @@ function mostrarValor($valor) {
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Descripcion:</label>
                                 <textarea class="form-control" name="descripcion_categoria" rows="3"><?php echo mostrarValor($categoria['descripcion_categoria']); ?></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Estado:</label>
+                                <select class="form-select" name="estado_categoria" required>
+                                    <option value="1"
+                                        <?php echo ((int)$categoria['estado_categoria'] === 1) ? 'selected' : ''; ?>>
+                                        Activa
+                                    </option>
+
+                                    <option value="0"
+                                        <?php echo ((int)$categoria['estado_categoria'] === 0) ? 'selected' : ''; ?>>
+                                        Inactiva
+                                    </option>
+                                </select>
+
+                                <small class="text-muted">
+                                    <i class="fa-solid fa-circle-info me-1"></i>
+                                    Las categorías inactivas no podrán seleccionarse al registrar productos.
+                                </small>
                             </div>
                             <hr>
                             <div class="text-end">
@@ -118,4 +141,5 @@ function mostrarValor($valor) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/js/main.js"></script>
 </body>
+
 </html>

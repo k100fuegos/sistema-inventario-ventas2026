@@ -2,10 +2,9 @@
 
 require_once __DIR__ . '/../../../negocio/ProductoNegocio.php';
 
+$buscar = trim($_GET['buscar_producto'] ?? '');
 $productoNegocio = new ProductoNegocio();
-$productos = $productoNegocio->listarProductos();
-
-
+$productos = $productoNegocio->listarProductos($buscar);
 
 $mensaje = $_GET['mensaje'] ?? '';
 
@@ -21,7 +20,7 @@ function mostrarValor($valor)
 
 <head>
     <meta charset="UTF-8">
-    <title>Productos - Tecnobyte</title>
+    <title>Productos - Technobyte</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="../../../public/css/style.css?v=<?php echo time(); ?>">
@@ -50,7 +49,7 @@ function mostrarValor($valor)
                 <div class="container-fluid">
                     <button type="button" id="sidebarCollapse" class="btn btn-dorado"><i class="fa-solid fa-bars"></i></button>
                     <div class="ms-auto d-flex align-items-center">
-                        <span class="me-3 fw-bold"><i class="fa-solid fa-circle-user"></i> LÓGICA PHP</span>
+                        <span class="me-3 fw-bold"><i class="fa-solid fa-circle-user"></i> Administrador</span>
                         <a href="../../../logout.php" class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
                     </div>
                 </div>
@@ -62,19 +61,11 @@ function mostrarValor($valor)
                 <div class="row mb-4 align-items-center">
                     <div class="col-md-6">
                         <form action="" method="GET" class="d-flex">
-                            <input type="text" class="form-control me-2" name="buscar_producto" placeholder="Buscar por código o nombre...">
-                            <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <input type="text" class="form-control me-2" name="buscar_producto" placeholder="Buscar por nombre, código, modelo, categoría o marca..." value="<?php echo mostrarValor($buscar); ?>">
+                            <button type="submit" class="btn btn-outline-primary me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <button type="button" class="btn btn-outline-secondary btn-reset-search" title="Limpiar búsqueda"><i class="fa-solid fa-arrows-rotate"></i></button>
                         </form>
                     </div>
-
-                    <?php if ($mensaje === 'creado'): ?>
-                        <div class="alert alert-success">Producto registrado correctamente</div>
-                    <?php elseif ($mensaje === 'actualizado'): ?>
-                        <div class="alert alert-success">Producto actualizado correctamente</div>
-                    <?php elseif ($mensaje === 'eliminado'): ?>
-                        <div class="alert alert-success">Producto eliminado correctamente</div>
-                    <?php endif; ?>
-
                     <div class="col-md-6 text-md-end">
                         <a href="crear.php" class="btn btn-primary fw-bold"><i class="fa-solid fa-plus"></i> Nuevo Producto</a>
                     </div>
@@ -84,24 +75,24 @@ function mostrarValor($valor)
                     <div class="table-responsive rounded-2">
                         <table class="table table-hover table-striped mb-0 align-middle text-center">
                             <thead class="table-dark">
-                                <tr">
+                                <tr>
                                     <th>Código</th>
                                     <th>Imagen</th>
                                     <th>Nombre</th>
                                     <th>Modelo</th>
-                                    <th>Descripcion</th>
-                                    <th>Categoría</th>
-                                    <th>Marca</th>
+                                    <th>Categoría / Marca</th>
+                                    <!-- <th>Descripción</th> -->
                                     <th>Stock</th>
                                     <th>Precio</th>
+                                    <th>Estado</th>
                                     <th>Acciones</th>
-                                    </tr>
+                                </tr>
                             </thead>
                             <tbody>
                                 <?php if (!empty($productos)):
                                     foreach ($productos as $producto): ?>
                                         <tr>
-                                            <td class="py-5"><?php echo mostrarValor($producto['codigo_producto']); ?></td>
+                                            <td class="fw-bold text-muted"><?php echo mostrarValor($producto['codigo_producto']); ?></td>
                                             <td>
                                                 <?php
                                                 $imagenProducto = $producto['imagen_producto'] ?: 'sin-imagen.png';
@@ -116,27 +107,46 @@ function mostrarValor($valor)
                                                 <img src="<?php echo mostrarValor($rutaImagen); ?>"
                                                     alt="Imagen del producto"
                                                     class="img-thumbnail"
-                                                    style="width: 70px; height: 70px; object-fit: cover;">
+                                                    style="width: 60px; height: 60px; object-fit: cover;">
                                             </td>
 
                                             <td><?php echo mostrarValor($producto['nombre_producto']); ?></td>
                                             <td><?php echo mostrarValor($producto['modelo_producto']); ?></td>
-                                            <td><?php echo mostrarValor($producto['descripcion_producto']); ?></td>
-                                            <td><?php echo mostrarValor($producto['nombre_categoria']); ?></td>
-                                            <td><?php echo mostrarValor($producto['nombre_marca']); ?></td>
-                                            <td><?php echo mostrarValor($producto['stock_producto']); ?></td>
-                                            <td>$<?php echo number_format((float) $producto['precio_producto'], 2); ?></td>
+                                            <td>
+                                                <span class="d-block"><?php echo mostrarValor($producto['nombre_categoria']); ?></span>
+                                                <small class="text-muted"><?php echo mostrarValor($producto['nombre_marca']); ?></small>
+                                            </td>
+
+                                            <!-- <td><?php # echo mostrarValor($producto['descripcion_producto']); ?></td> -->
+
+                                            <td class="
+                                            <?php
+                                            if ($producto['stock_producto'] <= 5) {
+                                                echo 'text-danger fw-bold';
+                                            } elseif ($producto['stock_producto'] <= 10) {
+                                                echo 'text-warning fw-bold';
+                                            }
+                                            ?>">
+                                                <?php echo mostrarValor($producto['stock_producto']); ?>
+                                            </td>
+                                            <td class="fw-bold">$<?php echo number_format((float) $producto['precio_producto'], 2); ?></td>
+                                            <td>
+                                                <?php if ((int)$producto['estado_producto'] === 1): ?>
+                                                    <span class="badge bg-success">Activo</span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-secondary">Inactivo</span>
+                                                <?php endif; ?>
+                                            </td>
                                             <td>
                                                 <a href="editar.php?id=<?php echo mostrarValor($producto['id_producto']); ?>" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-pen"></i></a>
                                                 <a href="eliminar.php?id=<?php echo mostrarValor($producto['id_producto']); ?>" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
-
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="9" class="text-center">No hay productos registrados</td>
-                                    </tr>
+                                         <td colspan="9" class="text-center py-4">No se encontraron registros</td>
+                                     </tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
@@ -145,8 +155,72 @@ function mostrarValor($valor)
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/js/main.js"></script>
+    <script src="../../../public/js/notificacion.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <?php
+
+    $mensajeToast = '';
+    $tipoToast = '';
+
+    switch ($mensaje) {
+
+        case 'creado':
+            $mensajeToast = 'Producto registrado correctamente.';
+            $tipoToast = 'success';
+            break;
+
+        case 'actualizado':
+            $mensajeToast = 'Producto actualizado correctamente.';
+            $tipoToast = 'success';
+            break;
+
+        case 'eliminado':
+            $mensajeToast = 'Producto eliminado correctamente.';
+            $tipoToast = 'success';
+            break;
+
+        case 'error':
+            $mensajeToast = 'Ha ocurrido un error.';
+            $tipoToast = 'error';
+            break;
+    }
+
+    ?>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+
+        <div
+            id="toastMensaje"
+            class="toast border-0"
+            role="alert"
+            data-mensaje="<?php echo $mensajeToast; ?>"
+            data-tipo="<?php echo $tipoToast; ?>">
+
+            <div class="toast-header">
+
+                <i id="toastIcono"></i>
+
+                <strong id="toastTitulo" class="me-auto"></strong>
+
+                <small>Ahora</small>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="toast">
+                </button>
+
+            </div>
+
+            <div class="toast-body" id="toastCuerpo"></div>
+
+        </div>
+
+    </div>
 </body>
 
 </html>

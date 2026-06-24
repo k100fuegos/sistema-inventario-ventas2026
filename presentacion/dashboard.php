@@ -26,7 +26,6 @@
                 <li><a href="admin/productos/listar.php"><i class="fa-solid fa-cubes"></i> Productos</a></li>
                 <li><a href="admin/clientes/listar.php"><i class="fa-solid fa-users"></i> Clientes</a></li>
                 <li><a href="admin/usuarios/listar.php"><i class="fa-solid fa-user-shield"></i> Usuarios</a></li>
-                <li><a href="admin/roles/listar.php"><i class="fa-solid fa-user-shield"></i> Roles</a></li>
             </ul>
         </nav>
 
