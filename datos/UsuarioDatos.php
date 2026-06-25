@@ -112,11 +112,27 @@ class UsuarioDatos
         ]);
     }
 
+    public function obtenerUsuarioPorCorreoCompleto($correo)
+    {
+        $conexion = new Conexion();
+        $conexion->query = "SELECT u.id_usuario, u.id_rol, r.nombre_rol, u.nombre_usuario, 
+                                   u.correo_usuario, u.password_usuario, u.estado_usuario, u.eliminado_usuario
+                            FROM usuarios u
+                            INNER JOIN roles r ON u.id_rol = r.id_rol
+                            WHERE u.correo_usuario = :correoUsuario";
+                            
+        return $conexion->get_record([
+            ':correoUsuario' => $correo
+        ]);
+    }
+
     public function eliminarUsuario($idUsuario)
     {
         $conexion = new Conexion();
+        // Liberar el correo para que pueda ser reutilizado por otro usuario, concatenando _del_ y el ID
         $conexion->query = "UPDATE usuarios 
-                            SET eliminado_usuario = 1 
+                            SET eliminado_usuario = 1,
+                                correo_usuario = CONCAT(SUBSTRING(correo_usuario, 1, 80), '_del_', id_usuario)
                             WHERE id_usuario = :idUsuario";
 
         return $conexion->execute_query([

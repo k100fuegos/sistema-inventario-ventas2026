@@ -14,11 +14,24 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Redirige al login si el usuario no ha iniciado sesión
 function requerirLogin(): void
 {
     if (!isset($_SESSION['id_usuario'])) {
         header('Location: ' . _rutaLogin());
+        exit();
+    }
+
+    // Verificar en la BD si el usuario sigue existiendo, no está eliminado y sigue activo
+    require_once __DIR__ . '/../datos/UsuarioDatos.php';
+    $usuarioDatos = new UsuarioDatos();
+    $usuario = $usuarioDatos->obtenerUsuarioPorId($_SESSION['id_usuario']);
+
+    // Si el usuario no existe (fue borrado físico o lógico) o está inactivo
+    if (!$usuario || (int)$usuario['estado_usuario'] !== 1) {
+        // Destruir sesión y redirigir
+        session_unset();
+        session_destroy();
+        header('Location: ' . _rutaLogin() . '?mensaje=cuenta_inactiva');
         exit();
     }
 }

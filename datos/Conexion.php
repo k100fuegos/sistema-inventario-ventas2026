@@ -57,9 +57,9 @@ class Conexion
             // Retorno asociativo por defecto.
             $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            die('<h3 style="color: tomato; font-family: Arial;">
-                    No se puede establecer conexión con la base de datos: ' . $e->getMessage() . '
-                </h3>');
+            http_response_code(404);
+            require_once __DIR__ . '/../404.php';
+            die();
         }
 
         return $this->connection;
@@ -89,7 +89,9 @@ class Conexion
 
             return $result;
         } catch (PDOException $e) {
-            die('Error en la consulta: ' . $e->getMessage());
+            http_response_code(404);
+            require_once __DIR__ . '/../404.php';
+            die();
         }
     }
 
@@ -112,7 +114,9 @@ class Conexion
 
             return $records;
         } catch (PDOException $e) {
-            die('Error en la consulta: ' . $e->getMessage());
+            http_response_code(404);
+            require_once __DIR__ . '/../404.php';
+            die();
         }
     }
 
@@ -134,7 +138,9 @@ class Conexion
 
             return $record;
         } catch (PDOException $e) {
-            die('Error en la consulta: ' . $e->getMessage());
+            http_response_code(404);
+            require_once __DIR__ . '/../404.php';
+            die();
         }
     }
 }
