@@ -7,6 +7,20 @@ if (isset($_SESSION['id_usuario'])) {
 }
 
 require_once 'negocio/UsuarioNegocio.php';
+require_once 'datos/UsuarioDatos.php';
+
+// Seeder: Crear administrador por defecto si la tabla está ABSOLUTAMENTE vacía
+$usuarioDatos = new UsuarioDatos();
+if ($usuarioDatos->verificarTablaVacia()) {
+    $usuarioDatos->insertarUsuario([
+        'id_rol' => 1, // ROL_ADMIN
+        'nombre_usuario' => 'Administrador',
+        'correo_usuario' => 'admin@admin.com',
+        'password_usuario' => password_hash('Admin123', PASSWORD_BCRYPT),
+        'estado_usuario' => 1,
+        'eliminado_usuario' => 0
+    ]);
+}
 
 $mensajeError = '';
 
@@ -74,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <form action="" method="POST">
                         <div class="mb-4">
                             <label for="correo" class="form-label fw-bold d-flex align-items-center text-secondary">
-                                <i class="fa-solid fa-circle-user text-cyan icon-label"></i> Usuario o Correo
+                                <i class="fa-solid fa-circle-user text-cyan icon-label"></i>Correo Electronico
                             </label>
                             <input type="email" class="form-control rounded-pill" id="correo" name="correo" required autofocus>
                         </div>
@@ -95,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     <div class="text-center mt-4">
                         <p class="text-muted mb-1 small">Si olvidaste tu contraseña.</p>
-                        <a href="#" class="text-cyan text-decoration-none fw-bold small">Notifica a tu Supervisor</a>
+                        <a class="text-cyan text-decoration-none fw-bold small">Notifica a tu Supervisor</a>
                     </div>
 
                 </div>

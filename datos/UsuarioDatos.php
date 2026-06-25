@@ -36,6 +36,14 @@ class UsuarioDatos
         return trim($valor) == '' ? null : trim($valor);
     }
 
+    public function verificarTablaVacia()
+    {
+        $conexion = new Conexion();
+        $conexion->query = "SELECT COUNT(*) as total FROM usuarios";
+        $resultado = $conexion->get_record();
+        return (int) $resultado['total'] === 0;
+    }
+
     public function insertarUsuario($usuario)
     {
         $conexion = new Conexion();

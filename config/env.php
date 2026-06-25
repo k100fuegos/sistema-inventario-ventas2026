@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/El_Salvador');
 
 $archivoEnv = __DIR__ . '/../.env';
 if (!file_exists($archivoEnv)) {

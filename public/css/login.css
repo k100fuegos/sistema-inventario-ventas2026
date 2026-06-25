@@ -1,74 +1,110 @@
-
-body, html {
+html {
     height: 100%;
+}
+
+
+body {
     margin: 0;
+    padding: 0;
+    min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    
-    background: linear-gradient(45deg, #808080 0%, #ffffff 100%);
-    
+
+    background: linear-gradient(to bottom, #00a1d6 0%, #002330 100%);
+
+
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-
+/* --- Tarjeta de Login (Efecto Flotante) --- */
 .login-card {
     background-color: #ffffff;
-    border-radius: 20px;
-    overflow: hidden; 
+    border-radius: 24px;
+    overflow: hidden;
     width: 100%;
-    max-width: 900px; 
-    min-height: 500px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    max-width: 950px;
+    min-height: 520px;
+
+    box-shadow: 0 20px 40px rgba(0, 20, 60, 0.08);
+    display: flex;
 }
 
+/* --- Panel Izquierdo (Branding) --- */
 .login-left {
-    background: linear-gradient(135deg, #001f3f 0%, #01b5e3 100%);
-    padding: 90px;
+    background: linear-gradient(135deg, #00143C 0%, #008fbf 100%);
+    padding: 60px 50px;
     color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
-
 
 .login-logo {
-    max-width: 275px; 
+    max-width: 250px;
     height: auto;
-    margin-bottom: 20px;
-    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3)); 
-
+    margin-bottom: 30px;
+    filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.15));
+    transition: transform 0.3s ease;
 }
+
+.login-logo:hover {
+    transform: scale(1.03);
+}
+
+/* --- Panel Derecho (Formulario) --- */
 .login-right {
-    padding: 50px 40px;
+    padding: 60px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-
+/* --- Utilidades de Color --- */
 .text-cyan {
-    color: #12b5e5 !important;
+    color: #008fbf !important;
 }
 
 .bg-cyan {
-    background-color: #12b5e5 !important;
-}
-
-.bg-cyan:hover {
-    background-color: #0fa3ce !important;
-    transform: translateY(-2px);
+    background-color: #008fbf !important;
+    color: #ffffff;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border: none;
     transition: all 0.3s ease;
 }
 
+.bg-cyan:hover {
+    background-color: #00143C !important;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 143, 191, 0.25);
+}
 
+/* --- Cajas de Texto (Inputs) --- */
 .form-control.rounded-pill {
-    padding: 0.75rem 1.5rem;
-    border: 1px solid #ced4da;
-    background-color: #f8f9fa;
+    padding: 0.85rem 1.5rem;
+    border: 1.5px solid #bdbdbd;
+    background-color: #f8fafc;
+    border-radius: 12px !important;
+    color: #000000;
+    font-size: 1rem;
+    transition: all 0.3s ease;
 }
 
 .form-control.rounded-pill:focus {
-    box-shadow: 0 0 0 0.25rem rgba(18, 181, 229, 0.25);
-    border-color: #12b5e5;
+    border-color: #008fbf;
     background-color: #ffffff;
+    outline: none;
 }
 
+/* --- Iconos del Formulario --- */
 .icon-label {
-    font-size: 1.3rem;
-    margin-right: 10px;
+    font-size: 1.2rem;
+    margin-right: 12px;
+    color: #64748b;
 }

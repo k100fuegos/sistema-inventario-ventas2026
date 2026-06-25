@@ -107,7 +107,7 @@ function mostrarValor($valor)
                                     <?php foreach ($ventas as $venta): ?>
                                         <tr>
                                             <td class="fw-bold" style="color: var(--color-secundario);"><?php echo mostrarValor($venta['numero_factura']); ?></td>
-                                            <td class="fw-bold text-dark"><?php echo mostrarValor($venta['fecha_venta']); ?></td>
+                                            <td class="fw-bold text-dark"><?php echo mostrarValor(date('Y-m-d h:i:s A', strtotime($venta['fecha_venta']))); ?></td>
                                             <td><?php echo mostrarValor($venta['nombre_cliente']); ?></td>
                                             <td><?php echo mostrarValor($venta['nombre_usuario']); ?></td>
                                             <td>$ <?php echo mostrarValor(number_format($venta['subtotal_venta'], 2)); ?></td>
