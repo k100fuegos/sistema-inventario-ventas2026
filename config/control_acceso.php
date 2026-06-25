@@ -181,3 +181,19 @@ function _rutaDashboard(): string
 
     return '/ProyectoFinal/presentacion/dashboard.php';
 }
+
+// Devuelve una ruta absoluta o relativa calculada hacia un recurso específico
+function base_url(string $path = ''): string
+{
+    $raiz   = realpath(__DIR__ . DIRECTORY_SEPARATOR . '..');
+    $actual = realpath(dirname($_SERVER['SCRIPT_FILENAME'] ?? ''));
+
+    if ($raiz && $actual) {
+        $relativo = str_replace('\\', '/', substr($actual, strlen($raiz)));
+        $relativoLimpio = ltrim($relativo, '/');
+        $niveles = empty($relativoLimpio) ? 0 : count(explode('/', $relativoLimpio));
+        return str_repeat('../', $niveles) . ltrim($path, '/');
+    }
+
+    return '/ProyectoFinal/' . ltrim($path, '/');
+}
