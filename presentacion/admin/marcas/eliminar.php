@@ -91,7 +91,7 @@ function mostrarValor($valor) {
             <div class="container-fluid p-4 d-flex justify-content-center align-items-center" style="min-height: 80vh;">
                 <div class="card shadow-sm border-0 border-top border-danger border-4 text-center p-5 w-100" style="max-width: 500px;">
                     <i class="fa-solid fa-triangle-exclamation text-danger mb-4" style="font-size: 4rem;"></i>
-                    <h3 class="fw-bold mb-3">¿Eliminar Categoría?</h3>
+                    <h3 class="fw-bold mb-3">¿Eliminar Marca?</h3>
                     <?php if ($mensaje): ?>
                     <div class="alert alert-danger"><?php echo mostrarValor($mensaje); ?></div>
                 <?php endif; ?>

@@ -175,9 +175,11 @@ function mostrarValor($valor) {
                                     <select class="form-select" name="id_categoria" required>
                                         <option value="">Seleccione una categoría...</option>
                                         <?php foreach ($categorias as $categoria): ?>
-                                            <option value="<?php echo mostrarValor($categoria['id_categoria']); ?>" <?php echo ($datos['id_categoria'] == $categoria['id_categoria']) ? 'selected' : ''; ?>>
-                                                <?php echo mostrarValor($categoria['nombre_categoria']); ?>
-                                            </option>
+                                            <?php if ($categoria['estado_categoria'] == 1): ?>
+                                                <option value="<?php echo mostrarValor($categoria['id_categoria']); ?>" <?php echo ($datos['id_categoria'] == $categoria['id_categoria']) ? 'selected' : ''; ?>>
+                                                    <?php echo mostrarValor($categoria['nombre_categoria']); ?>
+                                                </option>
+                                            <?php endif; ?>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -186,9 +188,11 @@ function mostrarValor($valor) {
                                     <select class="form-select" name="id_marca" required>
                                         <option value="">Seleccione una marca...</option>
                                         <?php foreach ($marcas as $marca): ?>
-                                            <option value="<?php echo mostrarValor($marca['id_marca']); ?>" <?php echo ($datos['id_marca'] == $marca['id_marca']) ? 'selected' : ''; ?>>
-                                                <?php echo mostrarValor($marca['nombre_marca']); ?>
-                                            </option>
+                                            <?php if ($marca['estado_marca'] == 1): ?>
+                                                <option value="<?php echo mostrarValor($marca['id_marca']); ?>" <?php echo ($datos['id_marca'] == $marca['id_marca']) ? 'selected' : ''; ?>>
+                                                    <?php echo mostrarValor($marca['nombre_marca']); ?>
+                                                </option>
+                                            <?php endif; ?>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>

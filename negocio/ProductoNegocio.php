@@ -157,10 +157,9 @@ class ProductoNegocio
         ];
     }
 
-    // Método auxiliar privado para mover el archivo físico únicamente tras el éxito en BD
     private function guardarArchivoFisico($archivo, $nombreFinal)
     {
-        $directorioDestino = dirname(dirname(__DIR__)) . '/public/img/productos/';
+        $directorioDestino = dirname(__DIR__) . '/public/img/productos/';
         if (!is_dir($directorioDestino)) {
             mkdir($directorioDestino, 0777, true);
         }
@@ -235,7 +234,7 @@ class ProductoNegocio
             return; // No intentamos borrar la imagen por defecto
         }
 
-        $ruta = dirname(dirname(__DIR__)) . '/public/img/productos/' . $nombreArchivo;
+        $ruta = dirname(__DIR__) . '/public/img/productos/' . $nombreArchivo;
         
         if (file_exists($ruta) && is_file($ruta)) {
             unlink($ruta);

@@ -138,10 +138,12 @@ function mostrarValor($valor)
                                          <select class="form-select" id="id_cliente" name="id_cliente" required>
                                              <option value="">Seleccione un cliente...</option>
                                              <?php foreach ($clientes as $cliente): ?>
-                                                 <option value="<?php echo $cliente['id_cliente']; ?>" 
-                                                     <?php echo ($cliente['id_cliente'] == $venta['id_cliente']) ? 'selected' : ''; ?>>
-                                                     <?php echo mostrarValor($cliente['nombre_cliente']); ?>
-                                                 </option>
+                                                 <?php if ($cliente['estado_cliente'] == 1 || $cliente['id_cliente'] == $venta['id_cliente']): ?>
+                                                     <option value="<?php echo $cliente['id_cliente']; ?>" 
+                                                         <?php echo ($cliente['id_cliente'] == $venta['id_cliente']) ? 'selected' : ''; ?>>
+                                                         <?php echo mostrarValor($cliente['nombre_cliente']); ?>
+                                                     </option>
+                                                 <?php endif; ?>
                                              <?php endforeach; ?>
                                          </select>
                                      </div>
@@ -151,10 +153,12 @@ function mostrarValor($valor)
                                          <select class="form-select" id="id_usuario" name="id_usuario" required>
                                              <option value="">Seleccione un vendedor...</option>
                                              <?php foreach ($usuarios as $usuario): ?>
-                                                 <option value="<?php echo $usuario['id_usuario']; ?>" 
-                                                     <?php echo ($usuario['id_usuario'] == $venta['id_usuario']) ? 'selected' : ''; ?>>
-                                                     <?php echo mostrarValor($usuario['nombre_usuario']); ?>
-                                                 </option>
+                                                 <?php if ($usuario['estado_usuario'] == 1 || $usuario['id_usuario'] == $venta['id_usuario']): ?>
+                                                     <option value="<?php echo $usuario['id_usuario']; ?>" 
+                                                         <?php echo ($usuario['id_usuario'] == $venta['id_usuario']) ? 'selected' : ''; ?>>
+                                                         <?php echo mostrarValor($usuario['nombre_usuario']); ?>
+                                                     </option>
+                                                 <?php endif; ?>
                                              <?php endforeach; ?>
                                          </select>
                                      </div>

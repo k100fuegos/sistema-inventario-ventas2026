@@ -43,11 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'estado_usuario' => $_POST['estado_usuario'] ?? 1
     ];
 
-    echo "<pre>";
-    var_dump($datos);
-    echo "</pre>";
-    
-
     if (empty($errores)) {
         $resultado = $usuarioNegocio->actualizarUsuario($datos);
 
@@ -55,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: listar.php?mensaje=actualizado");
             exit;
         } else {
-            $errores = $resultado['errores'];
+            $errores = isset($resultado['errores']) ? $resultado['errores'] : [$resultado['mensaje']];
             $producto = $datos;
         }
     } else {
@@ -69,7 +64,6 @@ function mostrarValor($valor)
 }
 
 ?>
-
 
 <!DOCTYPE html>
 <html lang="es">

@@ -28,6 +28,21 @@ function mostrarValor($valor)
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="../../../public/css/style.css?v=<?php echo time(); ?>">
+    <style>
+        /* Estilos para congelar la columna de acciones en scroll horizontal */
+        .sticky-acciones {
+            position: sticky;
+            right: 0;
+            background-color: #fff;
+            z-index: 5;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+        }
+        .table-dark .sticky-acciones {
+            background-color: #212529; /* Color de fondo del thead dark */
+            color: #fff;
+            z-index: 15;
+        }
+    </style>
 </head>
 <body>
     <div class="d-flex">
@@ -87,9 +102,9 @@ function mostrarValor($valor)
                 </div>
 
                 <div class="card shadow-sm border-0">
-                    <div class="table-responsive rounded-2">
+                    <div class="table-responsive rounded-2" style="max-height: 65vh; overflow-y: auto;">
                         <table class="table table-hover table-striped mb-0 align-middle text-center">
-                            <thead class="table-dark">
+                            <thead class="table-dark" style="position: sticky; top: 0; z-index: 10;">
                                 <tr>
                                     <th>Factura N°</th>
                                     <th>Fecha</th>
@@ -99,7 +114,7 @@ function mostrarValor($valor)
                                     <th>IVA</th>
                                     <th>Total</th>
                                     <th class="text-center">Estado</th>
-                                    <th class="text-center">Acciones</th>
+                                    <th class="text-center sticky-acciones">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -122,7 +137,7 @@ function mostrarValor($valor)
                                                     <span class="badge bg-danger">Anulada</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td class="text-center">
+                                            <td class="text-center sticky-acciones">
                                                 <a href="ver_detalle.php?id=<?php echo $venta['id_venta']; ?>" class="btn btn-sm btn-outline-info" title="Ver Detalle"><i class="fa-solid fa-eye"></i></a>
                                                 <!-- pdf-removed -->
                                                 <?php if ($venta['estado_venta'] === 'Realizada' || $venta['estado_venta'] === 'Pendiente'): ?><?php if (tieneRol([ROL_ADMIN, ROL_SUPERVISOR])): ?>
