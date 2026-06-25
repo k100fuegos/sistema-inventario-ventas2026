@@ -206,6 +206,28 @@ class UsuarioNegocio
 
         $usuario = $this->limpiarDatos($datos);
 
+        // Validar unicidad del correo
+        if ($usuario['correo_usuario']) {
+            $dup = $this->usuarioDatos->obtenerUsuarioPorCorreoCompleto($usuario['correo_usuario']);
+            if ($dup) {
+                // Como el correo ya se libera al eliminar, si existe es porque:
+                // 1) Es un usuario activo.
+                // 2) Es un usuario eliminado al que NO se le liberó el correo (usuarios viejos).
+                if ($dup['eliminado_usuario'] == 1) {
+                    $errores[] = "El correo pertenece a un registro eliminado antiguo que no fue liberado. Contacte a soporte técnico.";
+                } else {
+                    $errores[] = "El correo electrónico ya se encuentra registrado para otro usuario activo.";
+                }
+            }
+        }
+
+        if (!empty($errores)) {
+            return [
+                'exito' => false,
+                'errores' => $errores
+            ];
+        }
+
         // RECOMENDACIÓN: Encriptar la contraseña antes de mandarla a la capa de datos
         $usuario['password_usuario'] = password_hash($usuario['password_usuario'], PASSWORD_BCRYPT);
 
@@ -234,15 +256,27 @@ class UsuarioNegocio
             $errores[] = "El identificador del usuario es obligatorio";
         }
 
+        $usuario = $this->limpiarDatos($datos);
+        $usuario['id_usuario'] = (int) $datos['id_usuario'];
+
+        // Validar unicidad del correo en Actualización
+        if ($usuario['correo_usuario']) {
+            $dup = $this->usuarioDatos->obtenerUsuarioPorCorreoCompleto($usuario['correo_usuario']);
+            if ($dup && $dup['id_usuario'] != $usuario['id_usuario']) {
+                if ($dup['eliminado_usuario'] == 1) {
+                    $errores[] = "El correo ingresado pertenece a un registro eliminado antiguo que no fue liberado. Contacte a soporte técnico.";
+                } else {
+                    $errores[] = "El correo electrónico ya se encuentra registrado para otro usuario activo.";
+                }
+            }
+        }
+
         if (!empty($errores)) {
             return [
                 'exito' => false,
                 'errores' => $errores
             ];
         }
-
-        $usuario = $this->limpiarDatos($datos);
-        $usuario['id_usuario'] = (int) $datos['id_usuario'];
 
         // LÓGICA DE CONTRASEÑA EN ACTUALIZACIÓN:
         // Si el usuario no envió una nueva contraseña, recuperamos la actual para no perderla
